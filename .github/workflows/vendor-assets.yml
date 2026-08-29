@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/vendor-assets.yml'
+      - 'scripts/build.mjs'
 
 permissions:
   contents: write
