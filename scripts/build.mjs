@@ -20,12 +20,14 @@ async function download(path, output) {
 const jsBuf = await download('/assets/index-DYBGkSYM.js', 'index-DYBGkSYM.js');
 const jsPath = new URL('../dist/index-DYBGkSYM.js', import.meta.url);
 let js = jsBuf.toString('utf8');
-const original = 'const _=zf.inquiry.send.useMutation({onSuccess:()=>S(!0),onError:()=>C(!0)}),N=';
-const replacement = 'const[P,L]=O.useState(!1),_={isPending:P,mutate:async X=>{L(!0);try{const R=await fetch("/api/inquiry",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(X)});if(!R.ok)throw new Error("send failed");S(!0)}catch{C(!0)}finally{L(!1)}}},N=';
-if (!js.includes(original)) throw new Error('Contact-form patch point not found in Manus bundle');
-js = js.replace(original, replacement);
+if (js.includes('/api/inquiry')) {
+  console.log('Contact form already points to /api/inquiry');
+} else {
+  const marker = '.inquiry.send.useMutation(';
+  if (!js.includes(marker)) throw new Error('Contact-form endpoint could not be located');
+  throw new Error('Bundle requires a contact-form patch, but no safe patch rule is available');
+}
 await writeFile(jsPath, js, 'utf8');
-console.log('Patched contact form to /api/inquiry');
 
 await download('/assets/index-DK_9qPWc.css', 'index-DK_9qPWc.css');
 
