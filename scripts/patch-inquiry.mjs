@@ -8,14 +8,10 @@ if (js.includes('fetch("/api/inquiry"')) {
   process.exit(0);
 }
 
-const pattern = /let\{mutateAsync:([A-Za-z_$][\w$]*),isPending:([A-Za-z_$][\w$]*)\}=([A-Za-z_$][\w$]*)\.inquiry\.send\.useMutation\(\);?/;
-const match = js.match(pattern);
-if (!match) throw new Error('Inquiry mutation marker not found');
+const original = '[E,C]=O.useState(!1),_=zf.inquiry.send.useMutation({onSuccess:()=>S(!0),onError:()=>C(!0)}),N=';
+const replacement = '[E,C]=O.useState(!1),[P,L]=O.useState(!1),_={isPending:P,mutate:async X=>{L(!0);try{const R=await fetch("/api/inquiry",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(X)});if(!R.ok)throw new Error("send failed");S(!0)}catch{C(!0)}finally{L(!1)}}},N=';
 
-const [, mutateName, pendingName] = match;
-const setter = 'setCasaInquiryPending';
-const replacement = `let[${pendingName},${setter}]=q.useState(!1),${mutateName}=async e=>{try{${setter}(!0);let r=await fetch("/api/inquiry",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(e)});if(!r.ok)throw new Error("Inquiry failed");return await r.json()}finally{${setter}(!1)}};`;
-
-js = js.replace(pattern, replacement);
+if (!js.includes(original)) throw new Error('Current Casa Naufragos inquiry marker not found');
+js = js.replace(original, replacement);
 await writeFile(path, js, 'utf8');
-console.log(`Patched Casa Naufragos inquiry form to /api/inquiry (${mutateName}/${pendingName})`);
+console.log('Patched Casa Naufragos inquiry form to /api/inquiry');
