@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/vendor-assets.yml'
       - 'scripts/build.mjs'
+      - 'scripts/patch-inquiry.mjs'
 
 permissions:
   contents: write
@@ -20,20 +21,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Download and patch original site assets
+      - name: Download original site assets
         run: node scripts/build.mjs
-      - name: Store assets permanently in repository
+      - name: Store and patch assets
         run: |
           cp dist/index-DYBGkSYM.js ./index-DYBGkSYM.js
           cp dist/index-DK_9qPWc.css ./index-DK_9qPWc.css
           rm -rf manus-storage
           cp -R dist/manus-storage ./manus-storage
+          node scripts/patch-inquiry.mjs
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add index-DYBGkSYM.js index-DK_9qPWc.css manus-storage
           if git diff --cached --quiet; then
-            echo "Assets already vendored"
+            echo "Assets already vendored and patched"
           else
-            git commit -m "Vendor original Casa Naufragos assets [skip ci]"
+            git commit -m "Vendor and patch Casa Naufragos assets [skip ci]"
             git push
           fi
