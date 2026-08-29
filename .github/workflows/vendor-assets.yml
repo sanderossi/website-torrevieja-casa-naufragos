@@ -1,0 +1,38 @@
+name: Vendor Casa Naufragos assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/vendor-assets.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  vendor:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Download and patch original site assets
+        run: node scripts/build.mjs
+      - name: Store assets permanently in repository
+        run: |
+          cp dist/index-DYBGkSYM.js ./index-DYBGkSYM.js
+          cp dist/index-DK_9qPWc.css ./index-DK_9qPWc.css
+          rm -rf manus-storage
+          cp -R dist/manus-storage ./manus-storage
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index-DYBGkSYM.js index-DK_9qPWc.css manus-storage
+          if git diff --cached --quiet; then
+            echo "Assets already vendored"
+          else
+            git commit -m "Vendor original Casa Naufragos assets [skip ci]"
+            git push
+          fi
