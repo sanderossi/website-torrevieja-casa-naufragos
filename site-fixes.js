@@ -239,6 +239,12 @@
         transition: opacity .15s ease;
       }
       .place-map-link:hover, .pricing-jump-link:hover { opacity: .72; }
+      @media (min-width: 768px) {
+        header.hero-nav-light nav a[href^="#"],
+        header.hero-nav-light nav button {
+          font-weight: 400 !important;
+        }
+      }
       .contact-narrative-lead {
         margin: 0;
         font-family: 'Outfit', sans-serif;
