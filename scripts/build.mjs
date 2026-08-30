@@ -1,4 +1,5 @@
 import { mkdir, copyFile, cp, rm, readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import bookings from '../data/bookings.js';
 
 const root = new URL('../', import.meta.url);
@@ -12,7 +13,19 @@ await copyFile(new URL('index.html', root), new URL('index.html', dist));
 await copyFile(new URL('index-DYBGkSYM.js', root), new URL('index-DYBGkSYM.js', dist));
 await copyFile(new URL('index-DK_9qPWc.css', root), new URL('index-DK_9qPWc.css', dist));
 await copyFile(new URL('availability.js', root), new URL('availability.js', dist));
+await copyFile(new URL('complex-tour.js', root), new URL('complex-tour.js', dist));
 await cp(new URL('manus-storage/', root), storage, { recursive: true });
+
+// Reconstruct the optimized portrait complex tour from text-safe repository chunks.
+const videoParts = await Promise.all(
+  [1, 2, 3, 4].map(n => readFile(new URL(`video/complex-tour.b64.${n}`, root), 'utf8'))
+);
+const videoBuffer = Buffer.from(videoParts.join('').replace(/\s+/g, ''), 'base64');
+const videoHash = createHash('sha256').update(videoBuffer).digest('hex');
+if (videoBuffer.length !== 95749 || videoHash !== '8f667f83b5150ff41f636aac957bbf0bdbe8772dc1f81a31fe2edb34dff9e4f5') {
+  throw new Error(`Complex tour video integrity check failed (${videoBuffer.length} bytes, ${videoHash})`);
+}
+await writeFile(new URL('complex-tour.mp4', dist), videoBuffer);
 
 const jsPath = new URL('index-DYBGkSYM.js', dist);
 let js = await readFile(jsPath, 'utf8');
@@ -59,4 +72,4 @@ js = js.replace(
 
 await writeFile(jsPath, js, 'utf8');
 
-console.log(`Casa Naufragos standalone build complete — ${bookings.length} booked period(s) baked into calendar`);
+console.log(`Casa Naufragos standalone build complete — ${bookings.length} booked period(s) baked into calendar; complex tour video verified`);
