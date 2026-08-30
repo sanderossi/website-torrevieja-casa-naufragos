@@ -71,6 +71,36 @@ const textReplacements = [
   ['Deux canapés, une grande TV', 'Un grand canapé relax, une grande TV'],
   ['deux canapés, grande TV', 'grand canapé relax, grande TV'],
 
+  // One shopping trolley, not two.
+  ['Two shopping trolleys wait in the apartment.', 'One shopping trolley waits in the apartment.'],
+  ['Twee boodschappentrolleys staan klaar in het appartement.', 'Eén boodschappentrolley staat klaar in het appartement.'],
+  ['Dos carros de la compra te esperan en el apartamento.', 'Un carro de la compra te espera en el apartamento.'],
+  ["Deux chariots de courses vous attendent dans l'appartement.", "Un chariot de courses vous attend dans l'appartement."],
+
+  // Add the sixth folding guest bed to the bedroom description.
+  ['A family room with a double and a single bed, plus a second double bedroom with wooden shutters and a big wardrobe. Air conditioning in both — sleep cool even in August.', 'A family room with a double and a single bed, plus a second double bedroom with wooden shutters and a big wardrobe. A sixth folding guest bed is also available. Air conditioning in both — sleep cool even in August.'],
+  ['Een familiekamer met een tweepersoons- en een eenpersoonsbed, plus een tweede tweepersoonsslaapkamer met houten luiken en een grote kledingkast. Airco in beide kamers — zelfs in augustus koel slapen.', 'Een familiekamer met een tweepersoons- en een eenpersoonsbed, plus een tweede tweepersoonsslaapkamer met houten luiken en een grote kledingkast. Daarnaast is er een zesde, opklapbaar logeerbed beschikbaar. Airco in beide kamers — zelfs in augustus koel slapen.'],
+  ['Una habitación familiar con cama doble e individual, más un segundo dormitorio doble con persianas de madera y un gran armario. Aire acondicionado en ambos — duerme fresco incluso en agosto.', 'Una habitación familiar con cama doble e individual, más un segundo dormitorio doble con persianas de madera y un gran armario. También hay disponible una sexta cama plegable para invitados. Aire acondicionado en ambos — duerme fresco incluso en agosto.'],
+  ['Une chambre familiale avec un lit double et un lit simple, plus une deuxième chambre double avec volets en bois et grande armoire. Climatisation dans les deux — dormez au frais même en août.', 'Une chambre familiale avec un lit double et un lit simple, plus une deuxième chambre double avec volets en bois et grande armoire. Un sixième lit d’appoint pliant est également disponible. Climatisation dans les deux — dormez au frais même en août.'],
+
+  // Internet wording.
+  ['Fast fiber WiFi', 'Fiber internet + WiFi'],
+  ['Snelle glasvezel-wifi', 'Glasvezel internet + WIFI'],
+  ['WiFi de fibra rápida', 'Internet de fibra + WiFi'],
+  ['WiFi fibre rapide', 'Internet fibre + WiFi'],
+
+  // Make clear that the citrus press is electric.
+  ['Dolce Gusto coffee machine & citrus press', 'Dolce Gusto coffee machine & electric citrus press'],
+  ['Dolce Gusto-koffieapparaat & citruspers', 'Dolce Gusto-koffieapparaat & elektrische citruspers'],
+  ['Cafetera Dolce Gusto y exprimidor', 'Cafetera Dolce Gusto y exprimidor eléctrico'],
+  ['Cafetière Dolce Gusto & presse-agrumes', 'Cafetière Dolce Gusto & presse-agrumes électrique'],
+
+  // Gallery wording: remove the promise word at the end.
+  ['Real photos of the real apartment — no wide-angle tricks, no staging. Promise.', 'Real photos of the real apartment — no wide-angle tricks, no staging.'],
+  ["Echte foto's van het echte appartement — geen groothoektrucs, geen styling. Beloofd.", "Echte foto's van het echte appartement — geen groothoektrucs, geen styling."],
+  ['Fotos reales del apartamento real — sin trucos de gran angular, sin puesta en escena. Prometido.', 'Fotos reales del apartamento real — sin trucos de gran angular, sin puesta en escena.'],
+  ["De vraies photos du vrai appartement — pas de trucage au grand-angle, pas de mise en scène. Promis.", "De vraies photos du vrai appartement — pas de trucage au grand-angle, pas de mise en scène."],
+
   // Pricing category headings; taglines/subtitles remain unchanged.
   ['label:"A week on holiday"', 'label:"One or more weeks"'],
   ['label:"A month away"', 'label:"One month or longer"'],
@@ -104,6 +134,30 @@ const textReplacements = [
   ["Une erreur s'est produite lors de l'envoi. Écrivez-nous directement à", "Une erreur s'est produite lors de l'envoi. Veuillez réessayer."]
 ];
 for (const [from, to] of textReplacements) js = js.replaceAll(from, to);
+
+// Add the balcony FAQ item in every supported language.
+const faqAdditions = [
+  [
+    '{q:"Can we stay in winter?",a:"Yes — and many do. Torrevieja has 300+ days of sunshine a year and mild winters of 14–18°C. See the current rates in the Prices section."}',
+    '{q:"Can we stay in winter?",a:"Yes — and many do. Torrevieja has 300+ days of sunshine a year and mild winters of 14–18°C. See the current rates in the Prices section."},{q:"Can the balcony be used in any weather?",a:"Yes. The balcony has sliding glass windows that can be opened completely or fully closed. That means you can enjoy it fully open in good weather and stay comfortably sheltered when it is windy, rainy or cooler."}'
+  ],
+  [
+    '{q:"Kunnen we in de winter komen?",a:"Ja — en velen doen dat. Torrevieja heeft 300+ zonnedagen per jaar en milde winters van 14–18°C. Bekijk de actuele tarieven bij Prijzen."}',
+    '{q:"Kunnen we in de winter komen?",a:"Ja — en velen doen dat. Torrevieja heeft 300+ zonnedagen per jaar en milde winters van 14–18°C. Bekijk de actuele tarieven bij Prijzen."},{q:"Is het balkon geschikt voor elk weertype?",a:"Ja. Het balkon is voorzien van schuiframen die volledig open of geheel gesloten kunnen worden. Daardoor zit je bij mooi weer helemaal open en bij wind, regen of koeler weer comfortabel beschut."}'
+  ],
+  [
+    '{q:"¿Se puede venir en invierno?",a:"Sí — y muchos lo hacen. Torrevieja tiene más de 300 días de sol al año e inviernos suaves de 14–18°C. Consulta las tarifas actuales en Precios."}',
+    '{q:"¿Se puede venir en invierno?",a:"Sí — y muchos lo hacen. Torrevieja tiene más de 300 días de sol al año e inviernos suaves de 14–18°C. Consulta las tarifas actuales en Precios."},{q:"¿Se puede usar el balcón con cualquier tiempo?",a:"Sí. El balcón tiene ventanas correderas de cristal que pueden abrirse por completo o cerrarse totalmente. Así puedes disfrutarlo totalmente abierto con buen tiempo y estar cómodamente protegido cuando hace viento, llueve o refresca."}'
+  ],
+  [
+    '{q:"Peut-on venir en hiver?",a:"Oui — et nombreux le font. Torrevieja compte plus de 300 jours de soleil par an et des hivers doux de 14 à 18 °C. Consultez les tarifs actuels dans Tarifs."}',
+    '{q:"Peut-on venir en hiver?",a:"Oui — et nombreux le font. Torrevieja compte plus de 300 jours de soleil par an et des hivers doux de 14 à 18 °C. Consultez les tarifs actuels dans Tarifs."},{q:"Le balcon convient-il à toutes les conditions météo ?",a:"Oui. Le balcon est équipé de baies vitrées coulissantes qui peuvent être entièrement ouvertes ou complètement fermées. Vous pouvez ainsi en profiter totalement ouvert par beau temps et rester confortablement à l’abri lorsqu’il y a du vent, de la pluie ou qu’il fait plus frais."}'
+  ]
+];
+for (const [from, to] of faqAdditions) {
+  if (!js.includes(from)) throw new Error('FAQ insertion signature not found');
+  js = js.replace(from, to);
+}
 
 // Preserve the requested nearby-business wording.
 js = js.replaceAll('Lidl, Aldi, Action', 'Lidl, Basic-Fit, Action');
