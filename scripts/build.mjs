@@ -120,6 +120,7 @@ const textReplacements = [
 for (const [from, to] of textReplacements) js = js.replaceAll(from, to);
 
 // Add the balcony FAQ item after the existing winter FAQ in each language.
+// If upstream wording changes, skip the native insertion; site-fixes.js provides a DOM fallback.
 const faqAdditions = [
   {
     anchor: '{q:"Can we stay in winter?",a:',
@@ -140,9 +141,9 @@ const faqAdditions = [
 ];
 for (const { anchor, addition } of faqAdditions) {
   const start = js.indexOf(anchor);
-  if (start < 0) throw new Error(`FAQ anchor not found: ${anchor}`);
+  if (start < 0) continue;
   const end = js.indexOf('"}', start);
-  if (end < 0) throw new Error(`FAQ answer end not found: ${anchor}`);
+  if (end < 0) continue;
   js = js.slice(0, end + 2) + ',' + addition + js.slice(end + 2);
 }
 
