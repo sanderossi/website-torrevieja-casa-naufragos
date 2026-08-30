@@ -131,10 +131,10 @@ const faqAdditions = [
   },
   {
     anchor: '{q:"¿Se puede venir en invierno?",a:',
-    addition: '{q:"¿Se puede usar el balcón con cualquier tiempo?",a:"Sí. El balcón tiene ventanas correderas de cristal que pueden abrirse por completo o cerrarse totalmente. Así puedes disfrutarlo totalmente abierto con buen tiempo y estar cómodamente protegido cuando hace viento, llueve o refresca."}'
+    addition: '{q:"¿Se puede usar el balcón con cualquier tiempo?",a:"Sí. El balcón tiene ventanas correderas de cristal que pueden abrirse por completo o cerrarse totalmente. Así puedes disfrutarlo totalmente abierto con buen tiempo en estar cómodamente protegido cuando hace viento, llueve o refresca."}'
   },
   {
-    anchor: '{q:"Peut-on venir en hiver?",a:',
+    anchor: '{q:"Peut-on venir en hiver ?",a:',
     addition: '{q:"Le balcon convient-il à toutes les conditions météo ?",a:"Oui. Le balcon est équipé de baies vitrées coulissantes qui peuvent être entièrement ouvertes ou complètement fermées. Vous pouvez ainsi en profiter totalement ouvert par beau temps et rester confortablement à l’abri lorsqu’il y a du vent, de la pluie ou qu’il fait plus frais."}'
   }
 ];
