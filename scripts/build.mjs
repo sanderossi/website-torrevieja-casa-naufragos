@@ -21,24 +21,20 @@ let js = await readFile(jsPath, 'utf8');
 
 // Content changes requested by the owner. Kept here so asset-vendoring cannot undo them.
 const textReplacements = [
-  // No visible email address: contact is exclusively through the form.
   ['hayatie@hotmail.com', ''],
 
-  // English: replace the borrowed word "paseo" with normal wording.
   ['Centre & boulevard: 20 min paseo', 'Centre & boulevard: 20 min walk'],
   ['a 20-minute paseo along the sea', 'a 20-minute walk along the sea'],
   ['20 min paseo', '20 min walk'],
   ['The evening paseo', 'The evening walk'],
   ['the evening paseo', 'the evening walk'],
 
-  // Dutch.
   ['Centrum & boulevard: 20 min paseo', 'Centrum & boulevard: 20 min lopen'],
   ["'s Avonds loopt een paseo van twintig minuten langs de zee je naar de boulevard", "'s Avonds loop je in twintig minuten langs de zee naar de boulevard"],
   ['20 min paseo', '20 min lopen'],
   ['De avondpaseo', 'De avondwandeling'],
   ['de avondpaseo', 'de avondwandeling'],
 
-  // Spanish: avoid the word altogether while keeping natural Spanish.
   ['Paseo marítimo y puerto: 20 min a pie', 'Frente marítimo y puerto: 20 min a pie'],
   ['Centro y paseo: 20 min de paseo', 'Centro y frente marítimo: 20 min a pie'],
   ['un paseo de veinte minutos junto al mar te lleva al paseo marítimo', 'una caminata de veinte minutos junto al mar te lleva al frente marítimo'],
@@ -48,20 +44,17 @@ const textReplacements = [
   ['el paseo de la tarde', 'la caminata de la tarde'],
   ['hasta el paseo marítimo', 'hasta el frente marítimo'],
 
-  // French.
   ['Centre & boulevard : 20 min de paseo', 'Centre & boulevard : 20 min à pied'],
   ['une paseo de vingt minutes', 'une promenade de vingt minutes'],
   ['20 min de paseo', '20 min à pied'],
   ['La paseo du soir', 'La promenade du soir'],
   ['la paseo du soir', 'la promenade du soir'],
 
-  // Final language normalization after the generic replacements above.
   ['Centrum & boulevard: 20 min walk', 'Centrum & boulevard: 20 min lopen'],
   ['label:"Centrum van Torrevieja",value:"20 min walk"', 'label:"Centrum van Torrevieja",value:"20 min lopen"'],
   ['Centre & boulevard : 20 min a pie', 'Centre & boulevard : 20 min à pied'],
   ['label:"Centre de Torrevieja",value:"20 min a pie"', 'label:"Centre de Torrevieja",value:"20 min à pied"'],
 
-  // There is one large relax sofa, not two sofas.
   ['Two sofas, a big TV', 'A large relax sofa, a big TV'],
   ['two sofas, big TV', 'large relax sofa, big TV'],
   ['Twee banken, een grote tv', 'Een grote relax sofa, een grote tv'],
@@ -71,37 +64,31 @@ const textReplacements = [
   ['Deux canapés, une grande TV', 'Un grand canapé relax, une grande TV'],
   ['deux canapés, grande TV', 'grand canapé relax, grande TV'],
 
-  // One shopping trolley, not two.
   ['Two shopping trolleys wait in the apartment.', 'One shopping trolley waits in the apartment.'],
   ['Twee boodschappentrolleys staan klaar in het appartement.', 'Eén boodschappentrolley staat klaar in het appartement.'],
   ['Dos carros de la compra te esperan en el apartamento.', 'Un carro de la compra te espera en el apartamento.'],
   ["Deux chariots de courses vous attendent dans l'appartement.", "Un chariot de courses vous attend dans l'appartement."],
 
-  // Add the sixth folding guest bed to the bedroom description.
   ['A family room with a double and a single bed, plus a second double bedroom with wooden shutters and a big wardrobe. Air conditioning in both — sleep cool even in August.', 'A family room with a double and a single bed, plus a second double bedroom with wooden shutters and a big wardrobe. A sixth folding guest bed is also available. Air conditioning in both — sleep cool even in August.'],
   ['Een familiekamer met een tweepersoons- en een eenpersoonsbed, plus een tweede tweepersoonsslaapkamer met houten luiken en een grote kledingkast. Airco in beide kamers — zelfs in augustus koel slapen.', 'Een familiekamer met een tweepersoons- en een eenpersoonsbed, plus een tweede tweepersoonsslaapkamer met houten luiken en een grote kledingkast. Daarnaast is er een zesde, opklapbaar logeerbed beschikbaar. Airco in beide kamers — zelfs in augustus koel slapen.'],
   ['Una habitación familiar con cama doble e individual, más un segundo dormitorio doble con persianas de madera y un gran armario. Aire acondicionado en ambos — duerme fresco incluso en agosto.', 'Una habitación familiar con cama doble e individual, más un segundo dormitorio doble con persianas de madera y un gran armario. También hay disponible una sexta cama plegable para invitados. Aire acondicionado en ambos — duerme fresco incluso en agosto.'],
   ['Une chambre familiale avec un lit double et un lit simple, plus une deuxième chambre double avec volets en bois et grande armoire. Climatisation dans les deux — dormez au frais même en août.', 'Une chambre familiale avec un lit double et un lit simple, plus une deuxième chambre double avec volets en bois et grande armoire. Un sixième lit d’appoint pliant est également disponible. Climatisation dans les deux — dormez au frais même en août.'],
 
-  // Internet wording.
   ['Fast fiber WiFi', 'Fiber internet + WiFi'],
   ['Snelle glasvezel-wifi', 'Glasvezel internet + WIFI'],
   ['WiFi de fibra rápida', 'Internet de fibra + WiFi'],
   ['WiFi fibre rapide', 'Internet fibre + WiFi'],
 
-  // Make clear that the citrus press is electric.
   ['Dolce Gusto coffee machine & citrus press', 'Dolce Gusto coffee machine & electric citrus press'],
   ['Dolce Gusto-koffieapparaat & citruspers', 'Dolce Gusto-koffieapparaat & elektrische citruspers'],
   ['Cafetera Dolce Gusto y exprimidor', 'Cafetera Dolce Gusto y exprimidor eléctrico'],
   ['Cafetière Dolce Gusto & presse-agrumes', 'Cafetière Dolce Gusto & presse-agrumes électrique'],
 
-  // Gallery wording: remove the promise word at the end.
   ['Real photos of the real apartment — no wide-angle tricks, no staging. Promise.', 'Real photos of the real apartment — no wide-angle tricks, no staging.'],
   ["Echte foto's van het echte appartement — geen groothoektrucs, geen styling. Beloofd.", "Echte foto's van het echte appartement — geen groothoektrucs, geen styling."],
   ['Fotos reales del apartamento real — sin trucos de gran angular, sin puesta en escena. Prometido.', 'Fotos reales del apartamento real — sin trucos de gran angular, sin puesta en escena.'],
   ["De vraies photos du vrai appartement — pas de trucage au grand-angle, pas de mise en scène. Promis.", "De vraies photos du vrai appartement — pas de trucage au grand-angle, pas de mise en scène."],
 
-  // Pricing category headings; taglines/subtitles remain unchanged.
   ['label:"A week on holiday"', 'label:"One or more weeks"'],
   ['label:"A month away"', 'label:"One month or longer"'],
   ['label:"Wintering in the sun"', 'label:"Several months"'],
@@ -115,19 +102,16 @@ const textReplacements = [
   ["label:\"Un mois d'évasion\"", 'label:"Un mois ou plus"'],
   ['label:"Hiverner au soleil"', 'label:"Plusieurs mois"'],
 
-  // Monthly pricing range now starts in October instead of November.
   ['November to March', 'October to March'],
   ['November t/m maart', 'Oktober t/m maart'],
   ['Noviembre a marzo', 'Octubre a marzo'],
   ['Novembre à mars', 'Octobre à mars'],
 
-  // FAQ may refer visitors to Prices, but may not duplicate rates.
   ['The monthly winter rate is €950 plus utilities.', 'See the current rates in the Prices section.'],
   ['Het maandtarief in de winter is €950 plus verbruik.', 'Bekijk de actuele tarieven bij Prijzen.'],
   ['La tarifa mensual de invierno es de 950 € más suministros.', 'Consulta las tarifas actuales en Precios.'],
   ["Le tarif mensuel d'hiver est de 950 € plus les charges.", 'Consultez les tarifs actuels dans Tarifs.'],
 
-  // Error message must not send guests to an email address.
   ['Something went wrong sending your request. Please email us directly at', 'Something went wrong sending your request. Please try again.'],
   ['Er ging iets mis bij het versturen. Mail ons rechtstreeks op', 'Er ging iets mis bij het versturen. Probeer het opnieuw.'],
   ['Algo salió mal al enviar tu solicitud. Escríbenos directamente a', 'Algo salió mal al enviar tu solicitud. Inténtalo de nuevo.'],
@@ -135,35 +119,35 @@ const textReplacements = [
 ];
 for (const [from, to] of textReplacements) js = js.replaceAll(from, to);
 
-// Add the balcony FAQ item in every supported language.
+// Add the balcony FAQ item after the existing winter FAQ in each language.
 const faqAdditions = [
-  [
-    '{q:"Can we stay in winter?",a:"Yes — and many do. Torrevieja has 300+ days of sunshine a year and mild winters of 14–18°C. See the current rates in the Prices section."}',
-    '{q:"Can we stay in winter?",a:"Yes — and many do. Torrevieja has 300+ days of sunshine a year and mild winters of 14–18°C. See the current rates in the Prices section."},{q:"Can the balcony be used in any weather?",a:"Yes. The balcony has sliding glass windows that can be opened completely or fully closed. That means you can enjoy it fully open in good weather and stay comfortably sheltered when it is windy, rainy or cooler."}'
-  ],
-  [
-    '{q:"Kunnen we in de winter komen?",a:"Ja — en velen doen dat. Torrevieja heeft 300+ zonnedagen per jaar en milde winters van 14–18°C. Bekijk de actuele tarieven bij Prijzen."}',
-    '{q:"Kunnen we in de winter komen?",a:"Ja — en velen doen dat. Torrevieja heeft 300+ zonnedagen per jaar en milde winters van 14–18°C. Bekijk de actuele tarieven bij Prijzen."},{q:"Is het balkon geschikt voor elk weertype?",a:"Ja. Het balkon is voorzien van schuiframen die volledig open of geheel gesloten kunnen worden. Daardoor zit je bij mooi weer helemaal open en bij wind, regen of koeler weer comfortabel beschut."}'
-  ],
-  [
-    '{q:"¿Se puede venir en invierno?",a:"Sí — y muchos lo hacen. Torrevieja tiene más de 300 días de sol al año e inviernos suaves de 14–18°C. Consulta las tarifas actuales en Precios."}',
-    '{q:"¿Se puede venir en invierno?",a:"Sí — y muchos lo hacen. Torrevieja tiene más de 300 días de sol al año e inviernos suaves de 14–18°C. Consulta las tarifas actuales en Precios."},{q:"¿Se puede usar el balcón con cualquier tiempo?",a:"Sí. El balcón tiene ventanas correderas de cristal que pueden abrirse por completo o cerrarse totalmente. Así puedes disfrutarlo totalmente abierto con buen tiempo y estar cómodamente protegido cuando hace viento, llueve o refresca."}'
-  ],
-  [
-    '{q:"Peut-on venir en hiver?",a:"Oui — et nombreux le font. Torrevieja compte plus de 300 jours de soleil par an et des hivers doux de 14 à 18 °C. Consultez les tarifs actuels dans Tarifs."}',
-    '{q:"Peut-on venir en hiver?",a:"Oui — et nombreux le font. Torrevieja compte plus de 300 jours de soleil par an et des hivers doux de 14 à 18 °C. Consultez les tarifs actuels dans Tarifs."},{q:"Le balcon convient-il à toutes les conditions météo ?",a:"Oui. Le balcon est équipé de baies vitrées coulissantes qui peuvent être entièrement ouvertes ou complètement fermées. Vous pouvez ainsi en profiter totalement ouvert par beau temps et rester confortablement à l’abri lorsqu’il y a du vent, de la pluie ou qu’il fait plus frais."}'
-  ]
+  {
+    anchor: '{q:"Can we stay in winter?",a:',
+    addition: '{q:"Can the balcony be used in any weather?",a:"Yes. The balcony has sliding glass windows that can be opened completely or fully closed. That means you can enjoy it fully open in good weather and stay comfortably sheltered when it is windy, rainy or cooler."}'
+  },
+  {
+    anchor: '{q:"Kunnen we in de winter komen?",a:',
+    addition: '{q:"Is het balkon geschikt voor elk weertype?",a:"Ja. Het balkon is voorzien van schuiframen die volledig open of geheel gesloten kunnen worden. Daardoor zit je bij mooi weer helemaal open en bij wind, regen of koeler weer comfortabel beschut."}'
+  },
+  {
+    anchor: '{q:"¿Se puede venir en invierno?",a:',
+    addition: '{q:"¿Se puede usar el balcón con cualquier tiempo?",a:"Sí. El balcón tiene ventanas correderas de cristal que pueden abrirse por completo o cerrarse totalmente. Así puedes disfrutarlo totalmente abierto con buen tiempo y estar cómodamente protegido cuando hace viento, llueve o refresca."}'
+  },
+  {
+    anchor: '{q:"Peut-on venir en hiver?",a:',
+    addition: '{q:"Le balcon convient-il à toutes les conditions météo ?",a:"Oui. Le balcon est équipé de baies vitrées coulissantes qui peuvent être entièrement ouvertes ou complètement fermées. Vous pouvez ainsi en profiter totalement ouvert par beau temps et rester confortablement à l’abri lorsqu’il y a du vent, de la pluie ou qu’il fait plus frais."}'
+  }
 ];
-for (const [from, to] of faqAdditions) {
-  if (!js.includes(from)) throw new Error('FAQ insertion signature not found');
-  js = js.replace(from, to);
+for (const { anchor, addition } of faqAdditions) {
+  const start = js.indexOf(anchor);
+  if (start < 0) throw new Error(`FAQ anchor not found: ${anchor}`);
+  const end = js.indexOf('"}', start);
+  if (end < 0) throw new Error(`FAQ answer end not found: ${anchor}`);
+  js = js.slice(0, end + 2) + ',' + addition + js.slice(end + 2);
 }
 
-// Preserve the requested nearby-business wording.
 js = js.replaceAll('Lidl, Aldi, Action', 'Lidl, Basic-Fit, Action');
 
-// Build booked periods directly into React DayPicker's native `disabled` matcher.
-// `departure` is deliberately INCLUDED: it is the checkout/cleaning day.
 function dateParts(iso) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
   if (!match) throw new Error(`Invalid booking date: ${iso}`);
@@ -183,7 +167,6 @@ if (!calendarPattern.test(js)) {
 }
 js = js.replace(calendarPattern, nativeDisabled);
 
-// Send unambiguous local YYYY-MM-DD values straight from React state to the API.
 if (!js.includes('arrivalIso:i?.from?')) {
   const oldPayload = '_.mutate({arrival:ql(i?.from,a),departure:ql(i?.to,a),nights:N,guests:l,name:d,email:h,message:v,lang:a})';
   const newPayload = '_.mutate({arrival:ql(i?.from,a),departure:ql(i?.to,a),arrivalIso:i?.from?`${i.from.getFullYear()}-${String(i.from.getMonth()+1).padStart(2,"0")}-${String(i.from.getDate()).padStart(2,"0")}`:"",departureIso:i?.to?`${i.to.getFullYear()}-${String(i.to.getMonth()+1).padStart(2,"0")}-${String(i.to.getDate()).padStart(2,"0")}`:"",nights:N,guests:l,name:d,email:h,message:v,lang:a})';
@@ -193,7 +176,6 @@ if (!js.includes('arrivalIso:i?.from?')) {
   js = js.replace(oldPayload, newPayload);
 }
 
-// Make natively disabled dates unmistakable in the calendar.
 js = js.replace(
   'disabled:Ae("text-muted-foreground opacity-50",h.disabled)',
   'disabled:Ae("text-muted-foreground opacity-60 line-through bg-[#e7e2dc] rounded-md",h.disabled)'
