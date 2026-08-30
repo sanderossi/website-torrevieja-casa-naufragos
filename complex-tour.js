@@ -1,4 +1,6 @@
 (() => {
+  const videoUrl = 'https://zpi0kut1tpgiotes.public.blob.vercel-storage.com/Filmpje_Torrevieja_Binnenplaats.mp4';
+
   const copy = {
     nl: {
       kicker: 'Even binnenkijken',
@@ -111,7 +113,7 @@
 
     const section = document.getElementById('location');
     const container = section?.querySelector('.container');
-    const mapLink = container?.querySelector('a[href*="google.com/maps"]');
+    const mapLink = container?.querySelector('a[href*="google.com/maps"], a[href*="maps.app.goo.gl"]');
     if (!container || !mapLink) return false;
 
     if (!document.getElementById('complex-tour-style')) {
@@ -131,7 +133,9 @@
           <p class="ct-text"></p>
         </div>
         <div class="ct-video-wrap">
-          <video src="/complex-tour.mp4" muted loop playsinline autoplay preload="metadata" aria-label="Casa Náufragos complex"></video>
+          <video muted loop playsinline autoplay preload="metadata" aria-label="Casa Náufragos complex">
+            <source src="${videoUrl}" type="video/mp4">
+          </video>
         </div>
       </div>`;
     updateText(block);
@@ -142,6 +146,7 @@
     const video = block.querySelector('video');
     video.muted = true;
     video.defaultMuted = true;
+    video.addEventListener('error', () => block.remove(), { once: true });
 
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver(entries => {
