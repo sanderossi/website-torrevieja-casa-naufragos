@@ -10,6 +10,7 @@ await mkdir(storage, { recursive: true });
 await copyFile(new URL('index.html', root), new URL('index.html', dist));
 await copyFile(new URL('index-DYBGkSYM.js', root), new URL('index-DYBGkSYM.js', dist));
 await copyFile(new URL('index-DK_9qPWc.css', root), new URL('index-DK_9qPWc.css', dist));
+await copyFile(new URL('availability.js', root), new URL('availability.js', dist));
 await cp(new URL('manus-storage/', root), storage, { recursive: true });
 
 const jsPath = new URL('index-DYBGkSYM.js', dist);
