@@ -4,6 +4,4 @@
 // De vertrekdag blijft automatisch óók geblokkeerd als schoonmaakdag.
 // De eerstvolgende mogelijke aankomst is dus de dag ná departure.
 // Gebruik altijd ISO-datums: YYYY-MM-DD.
-export default [
-  { arrival: "2026-09-07", departure: "2026-09-19", note: "Verhuurd" },
-];
+export default [];
