@@ -1,5 +1,6 @@
 (() => {
-  const videoUrl = 'https://zpi0kut1tpgiotes.public.blob.vercel-storage.com/Filmpje_Torrevieja_Binnenplaats.mp4?v=20260830-205017';
+  const videoUrl = '/video/complex-tour-h264.mp4?v=20260830-h264-1';
+  const posterUrl = '/video/complex-tour-poster.jpg?v=20260830-h264-1';
 
   const copy = {
     nl: {
@@ -133,7 +134,7 @@
           <p class="ct-text"></p>
         </div>
         <div class="ct-video-wrap">
-          <video muted loop playsinline autoplay preload="metadata" aria-label="Casa Náufragos complex">
+          <video muted loop playsinline autoplay preload="metadata" poster="${posterUrl}" aria-label="Casa Náufragos complex">
             <source src="${videoUrl}" type="video/mp4">
           </video>
         </div>

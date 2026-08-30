@@ -1,12 +1,15 @@
 import { mkdir, copyFile, cp, rm, readFile, writeFile } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import bookings from '../data/bookings.js';
 
 const root = new URL('../', import.meta.url);
 const dist = new URL('../dist/', import.meta.url);
 const storage = new URL('../dist/manus-storage/', import.meta.url);
+const video = new URL('../dist/video/', import.meta.url);
 
 await rm(dist, { recursive: true, force: true });
 await mkdir(storage, { recursive: true });
+await mkdir(video, { recursive: true });
 
 await copyFile(new URL('index.html', root), new URL('index.html', dist));
 await copyFile(new URL('index-DYBGkSYM.js', root), new URL('index-DYBGkSYM.js', dist));
@@ -14,6 +17,19 @@ await copyFile(new URL('index-DK_9qPWc.css', root), new URL('index-DK_9qPWc.css'
 await copyFile(new URL('availability.js', root), new URL('availability.js', dist));
 await copyFile(new URL('complex-tour.js', root), new URL('complex-tour.js', dist));
 await copyFile(new URL('site-fixes.js', root), new URL('site-fixes.js', dist));
+const videoBase64 = (await Promise.all([
+  'video/complex-tour.b64.1',
+  'video/complex-tour.b64.2',
+  'video/complex-tour.b64.3',
+  'video/complex-tour.b64.4'
+].map(path => readFile(new URL(path, root), 'utf8')))).join('');
+const videoBuffer = Buffer.from(videoBase64, 'base64');
+const videoHash = createHash('sha256').update(videoBuffer).digest('hex');
+if (videoHash !== 'c80d1ccaef980016707de0ef83e496479c59712e1050037a48b234c9d1fe5411') {
+  throw new Error('Complex tour video integrity check failed');
+}
+await writeFile(new URL('complex-tour-h264.mp4', video), videoBuffer);
+await copyFile(new URL('video/complex-tour-poster.jpg', root), new URL('complex-tour-poster.jpg', video));
 await cp(new URL('manus-storage/', root), storage, { recursive: true });
 
 const jsPath = new URL('index-DYBGkSYM.js', dist);
