@@ -4,8 +4,5 @@
   "version": "1.0.0",
   "scripts": {
     "build": "node scripts/build.mjs && node -e \"require('fs').copyFileSync('renter-info.js','dist/renter-info.js')\""
-  },
-  "dependencies": {
-    "@vercel/blob": "^2.6.1"
   }
 }
