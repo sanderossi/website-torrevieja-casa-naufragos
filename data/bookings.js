@@ -5,6 +5,5 @@
 // De eerstvolgende mogelijke aankomst is dus de dag ná departure.
 // Gebruik altijd ISO-datums: YYYY-MM-DD.
 export default [
-  // Voorbeeld (niet actief):
-  // { arrival: "2026-09-10", departure: "2026-09-17", note: "Reservering" },
+  { arrival: "2026-09-07", departure: "2026-09-19", note: "Verhuurd" },
 ];
