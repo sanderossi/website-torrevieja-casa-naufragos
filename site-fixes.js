@@ -22,11 +22,24 @@
   const externalMap = new Map(externalTerms.map(item => [item.term.toLocaleLowerCase(), item.url]));
   const externalRegex = new RegExp(externalTerms.map(item => item.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi');
 
-  const priceTerms = {
-    en: 'Prices',
-    nl: 'Prijzen',
-    es: 'Precios',
-    fr: 'Tarifs'
+  const priceTerms = { en: 'Prices', nl: 'Prijzen', es: 'Precios', fr: 'Tarifs' };
+  const balconyFaq = {
+    en: {
+      q: 'Can the balcony be used in any weather?',
+      a: 'Yes. The balcony has sliding glass windows that can be opened completely or fully closed. That means you can enjoy it fully open in good weather and stay comfortably sheltered when it is windy, rainy or cooler.'
+    },
+    nl: {
+      q: 'Is het balkon geschikt voor elk weertype?',
+      a: 'Ja. Het balkon is voorzien van schuiframen die volledig open of geheel gesloten kunnen worden. Daardoor zit je bij mooi weer helemaal open en bij wind, regen of koeler weer comfortabel beschut.'
+    },
+    es: {
+      q: '¿Se puede usar el balcón con cualquier tiempo?',
+      a: 'Sí. El balcón tiene ventanas correderas de cristal que pueden abrirse por completo o cerrarse totalmente. Así puedes disfrutarlo totalmente abierto con buen tiempo y estar cómodamente protegido cuando hace viento, llueve o refresca.'
+    },
+    fr: {
+      q: 'Le balcon convient-il à toutes les conditions météo ?',
+      a: 'Oui. Le balcon est équipé de baies vitrées coulissantes qui peuvent être entièrement ouvertes ou complètement fermées. Vous pouvez ainsi en profiter totalement ouvert par beau temps et rester confortablement à l’abri lorsqu’il y a du vent, de la pluie ou qu’il fait plus frais.'
+    }
   };
 
   const streetviewUrl = 'https://maps.app.goo.gl/j8VT1WMnkpdMV8GcA';
@@ -117,6 +130,29 @@
     replaceMatches(faq, regex, matched => makeLink(matched, '#pricing', false));
   }
 
+  function ensureBalconyFaq() {
+    const faq = document.getElementById('faq');
+    if (!faq) return;
+    const lang = (document.documentElement.lang || 'en').slice(0, 2).toLowerCase();
+    const copy = balconyFaq[lang] || balconyFaq.en;
+    const current = document.getElementById('balcony-faq-fallback');
+    const hasNative = Object.values(balconyFaq).some(item => (faq.textContent || '').includes(item.q) && item.q !== current?.querySelector('summary')?.textContent);
+    if (hasNative) {
+      current?.remove();
+      return;
+    }
+    let details = current;
+    if (!details) {
+      details = document.createElement('details');
+      details.id = 'balcony-faq-fallback';
+      details.innerHTML = '<summary></summary><p></p>';
+      const host = faq.querySelector('.mt-8') || faq.querySelector('.container') || faq;
+      host.appendChild(details);
+    }
+    details.querySelector('summary').textContent = copy.q;
+    details.querySelector('p').textContent = copy.a;
+  }
+
   function removeVisibleEmailRoutes() {
     document.querySelectorAll('a[href^="mailto:"]').forEach(anchor => {
       const contact = anchor.closest('#contact');
@@ -129,7 +165,6 @@
         anchor.replaceWith(document.createTextNode(''));
         return;
       }
-      // Heidi's name used to be a mailto link; keep the name, remove the email action.
       anchor.replaceWith(document.createTextNode(anchor.textContent || ''));
     });
   }
@@ -148,6 +183,12 @@
         transition: opacity .15s ease;
       }
       .place-map-link:hover, .pricing-jump-link:hover { opacity: .72; }
+      #balcony-faq-fallback { border-bottom: 1px solid hsl(var(--border)); }
+      #balcony-faq-fallback summary { cursor: pointer; list-style: none; padding: 20px 0; font-size: 18px; font-family: var(--font-display, inherit); font-weight: 500; }
+      #balcony-faq-fallback summary::-webkit-details-marker { display: none; }
+      #balcony-faq-fallback summary::after { content: '+'; float: right; font-family: sans-serif; font-weight: 400; }
+      #balcony-faq-fallback[open] summary::after { content: '−'; }
+      #balcony-faq-fallback p { padding: 0 0 24px; font-size: 16px; line-height: 1.65; opacity: .8; }
     `;
     document.head.appendChild(style);
   }
@@ -158,6 +199,7 @@
     addStyles();
     removeVisibleEmailRoutes();
     setStreetviewButtons();
+    ensureBalconyFaq();
     linkPlaces();
     linkFaqToPricing();
   }
