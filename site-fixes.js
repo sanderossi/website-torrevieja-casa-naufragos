@@ -3,8 +3,9 @@
   // Add every future named local amenity or attraction to this list as part of the content change.
   const placeRules = [
     { terms: ['Basic-Fit sportschool', 'Gimnasio Basic-Fit', 'Basic-Fit gym', 'Salle Basic-Fit', 'Basic-Fit'], url: 'https://maps.app.goo.gl/z9v3QJqt8W8qrgEC9?g_st=ic' },
-    { terms: ['Lidl'], url: 'https://maps.app.goo.gl/9rb6v5WVmWuBM1Us6?g_st=ic' },
-    { terms: ['Aldi', 'ALDI'], url: 'https://www.google.com/maps/search/?api=1&query=ALDI+Torrevieja' },
+    { terms: ['Lidl'], url: 'https://maps.app.goo.gl/1Cdbamj9PsPSbFZ98?g_st=ic' },
+    { terms: ['Aldi', 'ALDI'], url: 'https://maps.app.goo.gl/p5D8uzfz1NWVzRZA9?g_st=ic' },
+    { terms: ['Boulevard & jachthaven', 'Promenade & marina', 'Frente marítimo y puerto', 'boulevard', 'Boulevard'], url: 'https://maps.app.goo.gl/Ehzj1atzzAmjBEdg8?g_st=ic' },
     { terms: ['Playa de Los Náufragos', 'Playa de los Náufragos'], url: 'https://www.google.com/maps/search/?api=1&query=Playa+de+Los+Naufragos+Torrevieja' },
     { terms: ['Aquopolis Torrevieja', 'Aquopolis-waterpark', 'Aquopolis water park', 'Parque acuático Aquopolis', 'Parc aquatique Aquopolis', 'Aquopolis'], url: 'https://www.google.com/maps/search/?api=1&query=Aquopolis+Torrevieja' },
     { terms: ['The Pink Lake', 'Pink Lake', 'Het roze meer', 'het roze meer', 'Roze meer', 'roze meer', 'La Laguna Rosa', 'Laguna Rosa'], url: 'https://www.google.com/maps/search/?api=1&query=Laguna+Rosa+Torrevieja' },
@@ -12,8 +13,7 @@
     { terms: ['Habaneras shopping centre', 'winkelcentrum Habaneras', 'centro comercial Habaneras', 'centre commercial Habaneras', 'Habaneras'], url: 'https://www.google.com/maps/search/?api=1&query=Centro+Comercial+Habaneras+Torrevieja' },
     { terms: ['Action'], url: 'https://www.google.com/maps/search/?api=1&query=Action+Torrevieja' },
     { terms: ['Torrevieja center', 'Torrevieja centre', 'Centrum van Torrevieja', 'Centro de Torrevieja', 'Centre de Torrevieja'], url: 'https://www.google.com/maps/search/?api=1&query=Torrevieja+centre' },
-    { terms: ['Friday market', 'Vrijdagmarkt', 'Mercadillo del viernes', 'Marché du vendredi', 'marché du vendredi'], url: 'https://www.google.com/maps/search/?api=1&query=Mercadillo+de+Torrevieja+viernes' },
-    { terms: ['Boulevard & jachthaven', 'Promenade & marina', 'Frente marítimo y puerto'], url: 'https://www.google.com/maps/search/?api=1&query=Torrevieja+marina' }
+    { terms: ['Friday market', 'Vrijdagmarkt', 'Mercadillo del viernes', 'Marché du vendredi', 'marché du vendredi'], url: 'https://www.google.com/maps/search/?api=1&query=Mercadillo+de+Torrevieja+viernes' }
   ];
 
   const externalTerms = placeRules
