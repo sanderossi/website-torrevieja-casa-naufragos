@@ -55,6 +55,12 @@ const textReplacements = [
   ['La paseo du soir', 'La promenade du soir'],
   ['la paseo du soir', 'la promenade du soir'],
 
+  // Final language normalization after the generic replacements above.
+  ['Centrum & boulevard: 20 min walk', 'Centrum & boulevard: 20 min lopen'],
+  ['label:"Centrum van Torrevieja",value:"20 min walk"', 'label:"Centrum van Torrevieja",value:"20 min lopen"'],
+  ['Centre & boulevard : 20 min a pie', 'Centre & boulevard : 20 min à pied'],
+  ['label:"Centre de Torrevieja",value:"20 min a pie"', 'label:"Centre de Torrevieja",value:"20 min à pied"'],
+
   // There is one large relax sofa, not two sofas.
   ['Two sofas, a big TV', 'A large relax sofa, a big TV'],
   ['two sofas, big TV', 'large relax sofa, big TV'],
