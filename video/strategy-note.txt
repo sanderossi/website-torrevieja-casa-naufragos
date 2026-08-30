@@ -1,0 +1,1 @@
+Media upload strategy: optimized MP4 split into binary Git blobs; build concatenates parts and validates SHA-256.
