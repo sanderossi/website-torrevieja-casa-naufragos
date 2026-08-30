@@ -1,0 +1,1 @@
+Binary MP4 parts are Git blobs reassembled at build time. Do not edit as text.
