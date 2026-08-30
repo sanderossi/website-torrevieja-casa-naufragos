@@ -17,8 +17,18 @@ function isIsoDate(value) {
 function daysBetween(start, end) {
   return Math.round((Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86400000);
 }
+function addDays(iso, amount) {
+  const d = new Date(`${iso}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + amount);
+  return d.toISOString().slice(0, 10);
+}
 function overlapsBooking(start, end) {
-  return bookings.some(p => p && isIsoDate(p.arrival) && isIsoDate(p.departure) && p.arrival < p.departure && start < p.departure && end > p.arrival);
+  const proposedFirstFreeDay = addDays(end, 1);
+  return bookings.some(p => {
+    if (!p || !isIsoDate(p.arrival) || !isIsoDate(p.departure) || p.arrival >= p.departure) return false;
+    const existingFirstFreeDay = addDays(p.departure, 1);
+    return start < existingFirstFreeDay && proposedFirstFreeDay > p.arrival;
+  });
 }
 function validate(body) {
   if (!body || typeof body !== "object") throw new Error("Invalid request");
