@@ -22,7 +22,7 @@ const videoParts = await Promise.all(
 );
 const videoBuffer = Buffer.from(videoParts.join('').replace(/\s+/g, ''), 'base64');
 const videoHash = createHash('sha256').update(videoBuffer).digest('hex');
-if (videoBuffer.length !== 95749 || videoHash !== '8f667f83b5150ff41f636aac957bbf0bdbe8772dc1f81a31fe2edb34dff9e4f5') {
+if (videoBuffer.length !== 42926 || videoHash !== 'b92617a1eb07bf0f4c7b854cf1f485232b4623e672605e1ba55a60ee6fa03223') {
   throw new Error(`Complex tour video integrity check failed (${videoBuffer.length} bytes, ${videoHash})`);
 }
 await writeFile(new URL('complex-tour.mp4', dist), videoBuffer);
