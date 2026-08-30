@@ -4,10 +4,10 @@
   let blocked = new Set();
 
   const messages = {
-    nl: { booked: "Bezet", overlap: "Deze periode overlapt met een reeds verhuurde periode. Kies andere data." },
-    en: { booked: "Booked", overlap: "These dates overlap with an existing booking. Please choose different dates." },
-    es: { booked: "Ocupado", overlap: "Estas fechas se solapan con una reserva existente. Elige otras fechas." },
-    fr: { booked: "Occupé", overlap: "Ces dates chevauchent une réservation existante. Choisissez d’autres dates." }
+    nl: { booked: "Bezet", overlap: "Deze periode overlapt met een reeds verhuurde periode of schoonmaakdag. Kies andere data." },
+    en: { booked: "Booked", overlap: "These dates overlap with an existing booking or cleaning day. Please choose different dates." },
+    es: { booked: "Ocupado", overlap: "Estas fechas se solapan con una reserva existente o un día de limpieza. Elige otras fechas." },
+    fr: { booked: "Occupé", overlap: "Ces dates chevauchent une réservation existante ou un jour de ménage. Choisissez d’autres dates." }
   };
 
   function lang() {
@@ -26,13 +26,19 @@
     blocked = new Set();
     for (const p of periods) {
       if (!p?.arrival || !p?.departure || p.arrival >= p.departure) continue;
-      for (let d = p.arrival; d < p.departure; d = addDays(d, 1)) blocked.add(d);
+      const firstFreeDay = addDays(p.departure, 1);
+      for (let d = p.arrival; d < firstFreeDay; d = addDays(d, 1)) blocked.add(d);
     }
   }
 
   function overlaps(start, end) {
     if (!start || !end || start >= end) return false;
-    return periods.some(p => start < p.departure && end > p.arrival);
+    const proposedFirstFreeDay = addDays(end, 1);
+    return periods.some(p => {
+      if (!p?.arrival || !p?.departure || p.arrival >= p.departure) return false;
+      const existingFirstFreeDay = addDays(p.departure, 1);
+      return start < existingFirstFreeDay && proposedFirstFreeDay > p.arrival;
+    });
   }
 
   function selectedDates(form = document.querySelector("#contact form")) {
