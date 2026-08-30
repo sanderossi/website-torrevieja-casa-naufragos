@@ -23,22 +23,75 @@
   const externalRegex = new RegExp(externalTerms.map(item => item.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi');
 
   const priceTerms = { en: 'Prices', nl: 'Prijzen', es: 'Precios', fr: 'Tarifs' };
-  const balconyFaq = {
+
+  const faqCopy = {
     en: {
-      q: 'Can the balcony be used in any weather?',
-      a: 'Yes. The balcony has sliding glass windows that can be opened completely or fully closed. That means you can enjoy it fully open in good weather and stay comfortably sheltered when it is windy, rainy or cooler.'
+      balcony: {
+        q: 'What about the balcony?',
+        a: 'The balcony has large sliding glass windows that can be opened completely or fully closed. This makes it comfortable to use in different weather conditions: fully open when the weather is good and sheltered when it is windy, rainy or cooler.'
+      },
+      sun: {
+        q: 'How does the sun move around the balcony?',
+        a: 'The balcony faces northwest, so the sun moves along the balcony mainly during the second half of the day. The balcony also has large sliding glass windows that can be fully opened or closed, so you can use it open or sheltered as you prefer.'
+      }
     },
     nl: {
-      q: 'Is het balkon geschikt voor elk weertype?',
-      a: 'Ja. Het balkon is voorzien van schuiframen die volledig open of geheel gesloten kunnen worden. Daardoor zit je bij mooi weer helemaal open en bij wind, regen of koeler weer comfortabel beschut.'
+      balcony: {
+        q: 'Hoe zit het met het balkon?',
+        a: 'Het balkon heeft grote schuiframen die volledig open of geheel gesloten kunnen worden. Daardoor is het balkon geschikt voor verschillende weerssituaties: helemaal open bij mooi weer en comfortabel beschut bij wind, regen of koeler weer.'
+      },
+      sun: {
+        q: 'Hoe draait de zon?',
+        a: 'Het balkon ligt op het noordwesten, waardoor de zon vooral in de tweede helft van de dag langs het balkon draait. Het balkon heeft grote schuiframen die volledig open of dicht kunnen, zodat je het naar wens open of beschut kunt gebruiken.'
+      }
     },
     es: {
-      q: '¿Se puede usar el balcón con cualquier tiempo?',
-      a: 'Sí. El balcón tiene ventanas correderas de cristal que pueden abrirse por completo o cerrarse totalmente. Así puedes disfrutarlo totalmente abierto con buen tiempo y estar cómodamente protegido cuando hace viento, llueve o refresca.'
+      balcony: {
+        q: '¿Cómo es el balcón?',
+        a: 'El balcón tiene grandes ventanas correderas de cristal que pueden abrirse por completo o cerrarse totalmente. Así resulta cómodo con distintas condiciones meteorológicas: completamente abierto con buen tiempo y protegido cuando hace viento, llueve o refresca.'
+      },
+      sun: {
+        q: '¿Cómo da el sol en el balcón?',
+        a: 'El balcón está orientado al noroeste, por lo que el sol pasa junto al balcón principalmente durante la segunda mitad del día. Además, tiene grandes ventanas correderas de cristal que pueden abrirse por completo o cerrarse, para usarlo abierto o protegido según prefieras.'
+      }
     },
     fr: {
-      q: 'Le balcon convient-il à toutes les conditions météo ?',
-      a: 'Oui. Le balcon est équipé de baies vitrées coulissantes qui peuvent être entièrement ouvertes ou complètement fermées. Vous pouvez ainsi en profiter totalement ouvert par beau temps et rester confortablement à l’abri lorsqu’il y a du vent, de la pluie ou qu’il fait plus frais.'
+      balcony: {
+        q: 'Qu’en est-il du balcon ?',
+        a: 'Le balcon est équipé de grandes baies vitrées coulissantes qui peuvent être entièrement ouvertes ou complètement fermées. Il est ainsi agréable par différents temps : totalement ouvert lorsqu’il fait beau et confortablement abrité lorsqu’il y a du vent, de la pluie ou qu’il fait plus frais.'
+      },
+      sun: {
+        q: 'Comment le soleil arrive-t-il sur le balcon ?',
+        a: 'Le balcon est orienté nord-ouest, de sorte que le soleil passe le long du balcon principalement pendant la seconde moitié de la journée. Les grandes baies vitrées coulissantes peuvent aussi être entièrement ouvertes ou fermées, afin d’utiliser le balcon ouvert ou abrité selon vos préférences.'
+      }
+    }
+  };
+
+  const legacyBalconyQuestions = new Set([
+    'Can the balcony be used in any weather?',
+    'Is het balkon geschikt voor elk weertype?',
+    '¿Se puede usar el balcón con cualquier tiempo?',
+    'Le balcon convient-il à toutes les conditions météo ?',
+    ...Object.values(faqCopy).map(copy => copy.balcony.q)
+  ]);
+  const sunQuestions = new Set(Object.values(faqCopy).map(copy => copy.sun.q));
+
+  const highlightCopy = {
+    en: {
+      title: 'Close to everything, far from noise',
+      items: ['Beach: 2 min walk', 'Lidl & Aldi: 12 min walk', 'Promenade & marina: 20 min walk', 'Centre & boulevard: 20 min walk', 'Pink Lake (flamingos): 10 min by bike', 'Basic-Fit gym: 10 min by bike', 'Aquopolis water park: 10 min by car', 'Alicante Airport: 35 min by car', 'Café & pizzeria: 3 min walk', 'Friday market: up to 700 stalls']
+    },
+    nl: {
+      title: 'Dichtbij alles, ver van lawaai',
+      items: ['Strand: 2 min lopen', 'Lidl & Aldi: 12 min lopen', 'Boulevard & jachthaven: 20 min lopen', 'Centrum & boulevard: 20 min lopen', "Roze meer (flamingo's): 10 min fietsen", 'Basic-Fit: 10 min fietsen', 'Aquopolis-waterpark: 10 min met de auto', 'Vliegveld Alicante: 35 min met de auto', 'Café & pizzeria: 3 min lopen', 'Vrijdagmarkt: tot 700 kramen']
+    },
+    es: {
+      title: 'Cerca de todo, lejos del ruido',
+      items: ['Playa: 2 min a pie', 'Lidl y Aldi: 12 min a pie', 'Frente marítimo y puerto: 20 min a pie', 'Centro y frente marítimo: 20 min a pie', 'Laguna Rosa (flamencos): 10 min en bici', 'Gimnasio Basic-Fit: 10 min en bici', 'Parque acuático Aquopolis: 10 min en coche', 'Aeropuerto de Alicante: 35 min en coche', 'Cafetería y pizzería: 3 min a pie', 'Mercadillo del viernes: hasta 700 puestos']
+    },
+    fr: {
+      title: 'Proche de tout, loin du bruit',
+      items: ['Plage : 2 min à pied', 'Lidl & Aldi : 12 min à pied', 'Promenade & marina : 20 min à pied', 'Centre & boulevard : 20 min à pied', 'Laguna Rosa (flamants) : 10 min à vélo', 'Salle Basic-Fit : 10 min à vélo', 'Parc aquatique Aquopolis : 10 min en voiture', "Aéroport d'Alicante : 35 min en voiture", 'Café & pizzeria : 3 min à pied', "Marché du vendredi : jusqu'à 700 étals"]
     }
   };
 
@@ -49,6 +102,11 @@
     es: 'Ver en Google Street View',
     fr: 'Voir sur Google Street View'
   };
+
+  function lang() {
+    const value = (document.documentElement.lang || 'en').slice(0, 2).toLowerCase();
+    return ['en', 'nl', 'es', 'fr'].includes(value) ? value : 'en';
+  }
 
   function makeLink(text, href, external = false) {
     const a = document.createElement('a');
@@ -92,8 +150,7 @@
   }
 
   function setStreetviewButtons() {
-    const lang = (document.documentElement.lang || 'en').slice(0, 2).toLowerCase();
-    const label = streetviewLabels[lang] || streetviewLabels.en;
+    const label = streetviewLabels[lang()] || streetviewLabels.en;
     document.querySelectorAll('a').forEach(anchor => {
       const text = (anchor.textContent || '').trim();
       const href = anchor.getAttribute('href') || '';
@@ -112,6 +169,29 @@
     });
   }
 
+  function syncHighlightLanguage() {
+    const section = document.getElementById('highlights');
+    if (!section) return;
+    const copy = highlightCopy[lang()] || highlightCopy.en;
+    const allTitles = new Set(Object.values(highlightCopy).map(item => item.title));
+    const headings = [...section.querySelectorAll('h3')];
+    const heading = headings.find(item => allTitles.has((item.textContent || '').trim())) || headings[1];
+    if (!heading) return;
+    if ((heading.textContent || '').trim() !== copy.title) heading.textContent = copy.title;
+    const card = heading.parentElement;
+    if (!card) return;
+    const items = [...card.querySelectorAll('ul li')];
+    copy.items.forEach((text, index) => {
+      const item = items[index];
+      if (!item || (item.textContent || '').trim() === text) return;
+      const icon = item.querySelector('svg');
+      [...item.childNodes].forEach(node => {
+        if (node !== icon) node.remove();
+      });
+      item.append(document.createTextNode(text));
+    });
+  }
+
   function linkPlaces() {
     const main = document.querySelector('main');
     if (!main || !externalTerms.length) return;
@@ -124,33 +204,51 @@
   function linkFaqToPricing() {
     const faq = document.getElementById('faq');
     if (!faq) return;
-    const lang = (document.documentElement.lang || 'en').slice(0, 2).toLowerCase();
-    const word = priceTerms[lang] || priceTerms.en;
+    const word = priceTerms[lang()] || priceTerms.en;
     const regex = new RegExp(`\\b${word}\\b`, 'g');
     replaceMatches(faq, regex, matched => makeLink(matched, '#pricing', false));
   }
 
-  function ensureBalconyFaq() {
+  function normalizeFaqExtras() {
     const faq = document.getElementById('faq');
     if (!faq) return;
-    const lang = (document.documentElement.lang || 'en').slice(0, 2).toLowerCase();
-    const copy = balconyFaq[lang] || balconyFaq.en;
-    const current = document.getElementById('balcony-faq-fallback');
-    const hasNative = Object.values(balconyFaq).some(item => (faq.textContent || '').includes(item.q) && item.q !== current?.querySelector('summary')?.textContent);
-    if (hasNative) {
-      current?.remove();
-      return;
+
+    // Remove every native/legacy balcony or sun FAQ. The two canonical versions below are then added once.
+    faq.querySelectorAll('[data-slot="accordion-item"]').forEach(item => {
+      const question = (item.querySelector('button')?.textContent || '').trim();
+      if (legacyBalconyQuestions.has(question) || sunQuestions.has(question)) item.remove();
+    });
+    document.getElementById('balcony-faq-fallback')?.remove();
+
+    const copy = faqCopy[lang()] || faqCopy.en;
+    const accordion = faq.querySelector('[data-slot="accordion"]') || faq.querySelector('.mt-8');
+    if (!accordion) return;
+
+    let wrapper = document.getElementById('site-extra-faqs');
+    if (!wrapper) {
+      wrapper = document.createElement('div');
+      wrapper.id = 'site-extra-faqs';
+      accordion.insertAdjacentElement('afterend', wrapper);
     }
-    let details = current;
-    if (!details) {
-      details = document.createElement('details');
-      details.id = 'balcony-faq-fallback';
-      details.innerHTML = '<summary></summary><p></p>';
-      const host = faq.querySelector('.mt-8') || faq.querySelector('.container') || faq;
-      host.appendChild(details);
-    }
-    details.querySelector('summary').textContent = copy.q;
-    details.querySelector('p').textContent = copy.a;
+
+    const entries = [
+      ['balcony', copy.balcony],
+      ['sun', copy.sun]
+    ];
+    entries.forEach(([key, value]) => {
+      let details = document.getElementById(`site-faq-${key}`);
+      if (!details) {
+        details = document.createElement('details');
+        details.id = `site-faq-${key}`;
+        details.className = 'site-faq-extra';
+        details.innerHTML = '<summary></summary><p></p>';
+        wrapper.appendChild(details);
+      }
+      const summary = details.querySelector('summary');
+      const paragraph = details.querySelector('p');
+      if (summary.textContent !== value.q) summary.textContent = value.q;
+      if (paragraph.textContent !== value.a) paragraph.textContent = value.a;
+    });
   }
 
   function removeVisibleEmailRoutes() {
@@ -183,12 +281,13 @@
         transition: opacity .15s ease;
       }
       .place-map-link:hover, .pricing-jump-link:hover { opacity: .72; }
-      #balcony-faq-fallback { border-bottom: 1px solid hsl(var(--border)); }
-      #balcony-faq-fallback summary { cursor: pointer; list-style: none; padding: 20px 0; font-size: 18px; font-family: var(--font-display, inherit); font-weight: 500; }
-      #balcony-faq-fallback summary::-webkit-details-marker { display: none; }
-      #balcony-faq-fallback summary::after { content: '+'; float: right; font-family: sans-serif; font-weight: 400; }
-      #balcony-faq-fallback[open] summary::after { content: '−'; }
-      #balcony-faq-fallback p { padding: 0 0 24px; font-size: 16px; line-height: 1.65; opacity: .8; }
+      #site-extra-faqs { margin-top: 0; }
+      .site-faq-extra { border-bottom: 1px solid hsl(var(--border)); }
+      .site-faq-extra summary { cursor: pointer; list-style: none; padding: 20px 0; font-size: 18px; font-family: var(--font-display, inherit); font-weight: 500; }
+      .site-faq-extra summary::-webkit-details-marker { display: none; }
+      .site-faq-extra summary::after { content: '+'; float: right; font-family: sans-serif; font-weight: 400; }
+      .site-faq-extra[open] summary::after { content: '−'; }
+      .site-faq-extra p { padding: 0 0 24px; font-size: 16px; line-height: 1.65; opacity: .8; }
     `;
     document.head.appendChild(style);
   }
@@ -199,7 +298,8 @@
     addStyles();
     removeVisibleEmailRoutes();
     setStreetviewButtons();
-    ensureBalconyFaq();
+    syncHighlightLanguage();
+    normalizeFaqExtras();
     linkPlaces();
     linkFaqToPricing();
   }
@@ -210,5 +310,10 @@
   }
 
   schedule();
-  new MutationObserver(schedule).observe(document.documentElement, { childList: true, subtree: true });
+  new MutationObserver(schedule).observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['lang']
+  });
 })();
