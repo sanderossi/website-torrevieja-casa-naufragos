@@ -85,6 +85,12 @@ const textReplacements = [
   ["label:\"Un mois d'évasion\"", 'label:"Un mois ou plus"'],
   ['label:"Hiverner au soleil"', 'label:"Plusieurs mois"'],
 
+  // Monthly pricing range now starts in October instead of November.
+  ['November to March', 'October to March'],
+  ['November t/m maart', 'Oktober t/m maart'],
+  ['Noviembre a marzo', 'Octubre a marzo'],
+  ['Novembre à mars', 'Octobre à mars'],
+
   // FAQ may refer visitors to Prices, but may not duplicate rates.
   ['The monthly winter rate is €950 plus utilities.', 'See the current rates in the Prices section.'],
   ['Het maandtarief in de winter is €950 plus verbruik.', 'Bekijk de actuele tarieven bij Prijzen.'],
