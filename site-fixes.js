@@ -29,6 +29,14 @@
     fr: 'Tarifs'
   };
 
+  const streetviewUrl = 'https://maps.app.goo.gl/j8VT1WMnkpdMV8GcA';
+  const streetviewLabels = {
+    en: 'View on Google Street View',
+    nl: 'Bekijken op Google Streetview',
+    es: 'Ver en Google Street View',
+    fr: 'Voir sur Google Street View'
+  };
+
   function makeLink(text, href, external = false) {
     const a = document.createElement('a');
     a.textContent = text;
@@ -68,6 +76,27 @@
       if (last < text.length) frag.append(document.createTextNode(text.slice(last)));
       node.replaceWith(frag);
     }
+  }
+
+  function setStreetviewButtons() {
+    const lang = (document.documentElement.lang || 'en').slice(0, 2).toLowerCase();
+    const label = streetviewLabels[lang] || streetviewLabels.en;
+    document.querySelectorAll('a').forEach(anchor => {
+      const text = (anchor.textContent || '').trim();
+      const href = anchor.getAttribute('href') || '';
+      const isLocationButton =
+        href.includes('Calle+Vega+Baja+del+Segura') ||
+        /^View location on Google Maps$/i.test(text) ||
+        /^Bekijk de ligging op Google Maps$/i.test(text) ||
+        /^Ver la ubicación en Google Maps$/i.test(text) ||
+        /^Voir l'emplacement sur Google Maps$/i.test(text) ||
+        Object.values(streetviewLabels).includes(text);
+      if (!isLocationButton) return;
+      if (anchor.href !== streetviewUrl) anchor.href = streetviewUrl;
+      if (text !== label) anchor.textContent = label;
+      anchor.target = '_blank';
+      anchor.rel = 'noopener noreferrer';
+    });
   }
 
   function linkPlaces() {
@@ -128,6 +157,7 @@
     scheduled = false;
     addStyles();
     removeVisibleEmailRoutes();
+    setStreetviewButtons();
     linkPlaces();
     linkFaqToPricing();
   }
