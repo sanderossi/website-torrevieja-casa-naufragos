@@ -1,4 +1,5 @@
 import tls from "node:tls";
+import bookings from "../data/bookings.js";
 
 const GMAIL_USER = process.env.GMAIL_USER || "sanderossi@gmail.com";
 const RECIPIENTS = ["hayatie@hotmail.com", "sander@webstate.nl"];
@@ -8,23 +9,37 @@ function isEmail(value) {
 }
 function safeHeader(value) { return String(value).replace(/[\r\n]+/g, " ").trim(); }
 function encodeHeader(value) { return `=?UTF-8?B?${Buffer.from(value, "utf8").toString("base64")}?=`; }
+function isIsoDate(value) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+  const d = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value;
+}
+function daysBetween(start, end) {
+  return Math.round((Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86400000);
+}
+function overlapsBooking(start, end) {
+  return bookings.some(p => p && isIsoDate(p.arrival) && isIsoDate(p.departure) && p.arrival < p.departure && start < p.departure && end > p.arrival);
+}
 function validate(body) {
   if (!body || typeof body !== "object") throw new Error("Invalid request");
   const arrival = String(body.arrival ?? "").trim();
   const departure = String(body.departure ?? "").trim();
+  const arrivalIso = String(body.arrivalIso ?? "").trim();
+  const departureIso = String(body.departureIso ?? "").trim();
   const nights = Number(body.nights);
   const guests = String(body.guests ?? "").trim();
   const name = String(body.name ?? "").trim();
   const email = String(body.email ?? "").trim();
   const message = String(body.message ?? "").trim();
   const lang = String(body.lang ?? "en");
-  if (!arrival || !departure || !Number.isInteger(nights) || nights < 1) throw new Error("Invalid dates");
+  if (!arrival || !departure || !isIsoDate(arrivalIso) || !isIsoDate(departureIso) || arrivalIso >= departureIso) throw new Error("Invalid dates");
+  if (!Number.isInteger(nights) || nights < 1 || nights !== daysBetween(arrivalIso, departureIso)) throw new Error("Invalid dates");
   if (!guests || guests.length > 10) throw new Error("Invalid guests");
   if (!name || name.length > 120) throw new Error("Invalid name");
   if (!isEmail(email)) throw new Error("Invalid email");
   if (message.length > 2000) throw new Error("Message too long");
   if (!["en","nl","es","fr"].includes(lang)) throw new Error("Invalid language");
-  return { arrival, departure, nights, guests, name, email, message, lang };
+  return { arrival, departure, arrivalIso, departureIso, nights, guests, name, email, message, lang };
 }
 function buildMessage(input) {
   const langNames = { en:"Engels", nl:"Nederlands", es:"Spaans", fr:"Frans" };
@@ -88,8 +103,18 @@ export default async function handler(req,res) {
   res.setHeader("Content-Type","application/json; charset=utf-8");
   if (req.method!=="POST") {res.statusCode=405;res.setHeader("Allow","POST");return res.end(JSON.stringify({success:false,error:"Method not allowed"}));}
   try {
+    const input=validate(await readJson(req));
+    if (overlapsBooking(input.arrivalIso, input.departureIso)) {
+      res.statusCode=409;
+      return res.end(JSON.stringify({success:false,error:"Dates unavailable"}));
+    }
     const appPassword=process.env.GMAIL_APP_PASSWORD; if(!appPassword) throw new Error("GMAIL_APP_PASSWORD is not configured");
-    const input=validate(await readJson(req)); await smtpSend(buildMessage(input),appPassword);
+    await smtpSend(buildMessage(input),appPassword);
     res.statusCode=200; return res.end(JSON.stringify({success:true}));
-  } catch(error) { console.error("Inquiry send failed",error); res.statusCode=500; return res.end(JSON.stringify({success:false})); }
+  } catch(error) {
+    console.error("Inquiry send failed",error);
+    const validationError = error instanceof Error && /^(Invalid|Message too long)/.test(error.message);
+    res.statusCode=validationError ? 400 : 500;
+    return res.end(JSON.stringify({success:false}));
+  }
 }
