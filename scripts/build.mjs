@@ -35,6 +35,38 @@ await cp(new URL('manus-storage/', root), storage, { recursive: true });
 const jsPath = new URL('index-DYBGkSYM.js', dist);
 let js = await readFile(jsPath, 'utf8');
 
+// Use the approved Casa Náufragos wordmark everywhere the old compact logo
+// appeared. Header and footer previously rebuilt the name in live text beside
+// the old square icon, so replace those complete brand groups to avoid a
+// duplicated wordmark.
+const oldLogoAsset = 'logo:"/manus-storage/logo_27638940.png"';
+const newLogoAsset = 'logo:"/manus-storage/casa-naufragos-signature-logo.png"';
+if (js.includes(oldLogoAsset)) {
+  js = js.replace(oldLogoAsset, newLogoAsset);
+} else if (!js.includes(newLogoAsset)) {
+  throw new Error('Logo asset signature not found; refusing to build with an unknown brand asset');
+}
+
+const oldHeaderBrand = 'children:[b.jsx("img",{"data-loc":"client/src/components/Header.tsx:41",src:Mt.logo,alt:"Casa Náufragos logo",className:"h-11 w-11 object-contain drop-shadow-[0_2px_6px_rgba(43,38,32,0.25)]"}),b.jsxs("span",{"data-loc":"client/src/components/Header.tsx:42",className:"flex flex-col leading-none text-left",children:[b.jsxs("span",{"data-loc":"client/src/components/Header.tsx:43",className:"font-display text-xl tracking-tight whitespace-nowrap",children:["Casa ",b.jsx("span",{"data-loc":"client/src/components/Header.tsx:44",className:"text-terracotta",children:"Náufragos"})]}),b.jsx("span",{"data-loc":"client/src/components/Header.tsx:46",className:"mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/55 whitespace-nowrap",children:"Torrevieja · 100 m"})]})]';
+const newHeaderBrand = 'children:[b.jsx("img",{"data-loc":"client/src/components/Header.tsx:41",src:Mt.logo,alt:"Casa Náufragos — Torrevieja, 100 m from the beach",className:"h-auto w-[clamp(10.5rem,15vw,13.5rem)] max-w-[52vw] object-contain"})]';
+if (js.includes(oldHeaderBrand)) {
+  js = js.replace(oldHeaderBrand, newHeaderBrand);
+} else if (!js.includes(newHeaderBrand)) {
+  throw new Error('Header brand signature not found; refusing to build with mixed logo versions');
+}
+js = js.replace(
+  'className:"flex items-center gap-3 group shrink-0",children:[b.jsx("img",{"data-loc":"client/src/components/Header.tsx:41"',
+  'className:"flex items-center group shrink-0 rounded-xl bg-[#FAF7F2]/90 px-2.5 py-1.5 shadow-sm backdrop-blur-[2px]",children:[b.jsx("img",{"data-loc":"client/src/components/Header.tsx:41"'
+);
+
+const oldFooterBrand = 'b.jsxs("div",{"data-loc":"client/src/components/Footer.tsx:11",className:"flex items-center gap-2.5",children:[b.jsx("img",{"data-loc":"client/src/components/Footer.tsx:12",src:Mt.logo,alt:"",className:"h-11 w-11 object-contain"}),b.jsxs("span",{"data-loc":"client/src/components/Footer.tsx:13",className:"font-display text-xl text-white",children:["Casa ",b.jsx("span",{"data-loc":"client/src/components/Footer.tsx:14",className:"text-[#E8835A]",children:"Náufragos"})]})]})';
+const newFooterBrand = 'b.jsx("div",{"data-loc":"client/src/components/Footer.tsx:11",className:"rounded-2xl bg-[#FAF7F2] px-4 py-3 shadow-sm",children:b.jsx("img",{"data-loc":"client/src/components/Footer.tsx:12",src:Mt.logo,alt:"Casa Náufragos — Torrevieja, 100 m from the beach",className:"h-auto w-[min(78vw,22rem)] object-contain"})})';
+if (js.includes(oldFooterBrand)) {
+  js = js.replace(oldFooterBrand, newFooterBrand);
+} else if (!js.includes(newFooterBrand)) {
+  throw new Error('Footer brand signature not found; refusing to build with mixed logo versions');
+}
+
 // Owner-approved content layer. Keep this idempotent: every production build starts
 // from the vendored bundle and receives the same canonical copy.
 const textReplacements = [
@@ -349,5 +381,17 @@ js = js.replace(
 );
 
 await writeFile(jsPath, js, 'utf8');
+
+const htmlPath = new URL('index.html', dist);
+let html = await readFile(htmlPath, 'utf8');
+const oldFavicon = '<link rel="icon" type="image/png" href="/manus-storage/logo_27638940.png">';
+const newFavicon = '<link rel="icon" type="image/png" href="/manus-storage/casa-naufragos-favicon.png?v=20260831-1">';
+if (html.includes(oldFavicon)) {
+  html = html.replace(oldFavicon, newFavicon);
+} else if (!html.includes(newFavicon)) {
+  throw new Error('Favicon signature not found; refusing to build with an unknown browser icon');
+}
+html = html.replace('index-DYBGkSYM.js?v=site-20260830-copy-1', 'index-DYBGkSYM.js?v=site-20260831-logo-1');
+await writeFile(htmlPath, html, 'utf8');
 
 console.log(`Casa Naufragos standalone build complete — ${bookings.length} booked period(s) baked into calendar`);
