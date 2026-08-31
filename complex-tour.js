@@ -1,5 +1,5 @@
 (() => {
-  const videoUrl = '/video/complex-tour-h264.mp4?v=20260830-h264-1';
+  const videoUrl = 'https://zpi0kut1tpgiotes.public.blob.vercel-storage.com/Filmpje_Torrevieja_Binnenplaats.mp4';
   const posterUrl = '/video/complex-tour-poster.jpg?v=20260830-h264-1';
 
   const copy = {
