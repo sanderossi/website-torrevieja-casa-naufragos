@@ -40,6 +40,12 @@ let js = await readFile(jsPath, 'utf8');
 const textReplacements = [
   ['hayatie@hotmail.com', ''],
 
+  // Correct the cooking surface in every language.
+  ['Induction hob', 'Ceramic hob'],
+  ['Inductieplaat', 'Keramische kookplaat'],
+  ['Placa de inducción', 'Placa vitrocerámica'],
+  ['Plaque à induction', 'Plaque vitrocéramique'],
+
   // Earlier owner corrections that must survive future builds.
   ['Centre & boulevard: 20 min paseo', 'Centre & boulevard: 20 min walk'],
   ['a 20-minute paseo along the sea', 'a 20-minute walk along the sea'],

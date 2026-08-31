@@ -8,7 +8,7 @@
         cards: [
           { title: 'Beddengoed & handdoeken', text: 'Bedlinnen, badhanddoeken, strandhanddoeken en extra dekens liggen klaar.' },
           { title: 'Voor het strand', text: 'Drie strandstoelen en zwembad- en strandspullen staan klaar. Het zand van Playa de Los Náufragos ligt op nog geen 100 meter.' },
-          { title: 'Complete keuken', text: 'Inductieplaat, oven, vaatwasser, Dolce Gusto, elektrische citruspers, kookgerei en servies zijn aanwezig.' },
+          { title: 'Complete keuken', text: 'Keramische kookplaat, oven, vaatwasser, Dolce Gusto, elektrische citruspers, kookgerei en servies zijn aanwezig.' },
           { title: 'Wassen & drogen', text: 'Wasmachine, strijkijzer en droogrek zijn aanwezig voor kleding, handdoeken en zwemspullen.' },
           { title: 'Koel en donker slapen', text: 'De slaapkamers hebben airco en houten luiken helpen het licht buiten te houden.' },
           { title: 'Werken op afstand', text: 'Glasvezel internet + WIFI maakt videobellen, mail en normaal online werk goed mogelijk.' }
@@ -48,7 +48,7 @@
         cards: [
           { title: 'Bed linen & towels', text: 'Bed linen, bath towels, beach towels and extra blankets are ready for you.' },
           { title: 'For the beach', text: 'Three beach chairs plus pool and beach gear are ready to use. The sand of Playa de Los Náufragos is less than 100 metres away.' },
-          { title: 'Fully equipped kitchen', text: 'Induction hob, oven, dishwasher, Dolce Gusto, electric citrus press, cookware and tableware are all provided.' },
+          { title: 'Fully equipped kitchen', text: 'Ceramic hob, oven, dishwasher, Dolce Gusto, electric citrus press, cookware and tableware are all provided.' },
           { title: 'Wash & dry', text: 'A washing machine, iron and drying rack are available for clothes, towels and swimwear.' },
           { title: 'Cool, darker bedrooms', text: 'The bedrooms have air conditioning and wooden shutters help keep the light out.' },
           { title: 'Work remotely', text: 'Fiber internet + WiFi makes video calls, email and normal online work practical.' }
@@ -88,7 +88,7 @@
         cards: [
           { title: 'Ropa de cama y toallas', text: 'La ropa de cama, las toallas de baño, las toallas de playa y mantas adicionales están preparadas.' },
           { title: 'Para la playa', text: 'Hay tres sillas de playa y material para piscina y playa. La arena de Playa de Los Náufragos está a menos de 100 metros.' },
-          { title: 'Cocina completa', text: 'Placa de inducción, horno, lavavajillas, Dolce Gusto, exprimidor eléctrico, menaje de cocina y vajilla.' },
+          { title: 'Cocina completa', text: 'Placa vitrocerámica, horno, lavavajillas, Dolce Gusto, exprimidor eléctrico, menaje de cocina y vajilla.' },
           { title: 'Lavar y secar', text: 'Hay lavadora, plancha y tendedero para ropa, toallas y prendas de baño.' },
           { title: 'Dormir fresco y con menos luz', text: 'Los dormitorios tienen aire acondicionado y las persianas de madera ayudan a mantener la luz fuera.' },
           { title: 'Trabajar a distancia', text: 'Internet de fibra + WiFi permite hacer videollamadas, usar el correo y trabajar online con normalidad.' }
@@ -128,7 +128,7 @@
         cards: [
           { title: 'Draps & serviettes', text: 'Les draps, serviettes de bain, serviettes de plage et couvertures supplémentaires sont prêts à votre arrivée.' },
           { title: 'Pour la plage', text: 'Trois chaises de plage ainsi que du matériel de piscine et de plage sont à disposition. Le sable de Playa de Los Náufragos est à moins de 100 mètres.' },
-          { title: 'Cuisine complète', text: 'Plaque à induction, four, lave-vaisselle, Dolce Gusto, presse-agrumes électrique, ustensiles et vaisselle sont fournis.' },
+          { title: 'Cuisine complète', text: 'Plaque vitrocéramique, four, lave-vaisselle, Dolce Gusto, presse-agrumes électrique, ustensiles et vaisselle sont fournis.' },
           { title: 'Laver & sécher', text: 'Lave-linge, fer et étendoir sont disponibles pour les vêtements, serviettes et affaires de baignade.' },
           { title: 'Dormir au frais et dans l’obscurité', text: 'Les chambres sont climatisées et les volets en bois aident à garder la lumière à l’extérieur.' },
           { title: 'Télétravail', text: 'Internet fibre + WiFi permet les appels vidéo, les e-mails et le travail en ligne courant.' }
