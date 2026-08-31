@@ -140,11 +140,18 @@ const textReplacements = [
   ['Un luminoso apartamento en esquina con dos dormitorios, la piscina abajo y Playa de Los Náufragos a menos de 100 metros. Con aire acondicionado, internet de fibra + WiFi y una cocina totalmente equipada.', 'Un luminoso apartamento en esquina en la primera planta, con dos dormitorios, la piscina abajo y Playa de Los Náufragos a menos de 100 metros. Con aire acondicionado, internet de fibra + WiFi y una cocina totalmente equipada.'],
   ["Un appartement d’angle lumineux avec deux chambres, la piscine en bas et Playa de Los Náufragos à moins de 100 mètres. Avec climatisation, internet fibre + WiFi et une cuisine entièrement équipée.", "Un appartement d’angle lumineux au premier étage, avec deux chambres, la piscine en bas et Playa de Los Náufragos à moins de 100 mètres. Avec climatisation, internet fibre + WiFi et une cuisine entièrement équipée."],
 
-  // Hero facts: the distance is already the headline, so use the fourth icon for WiFi.
-  ['facts:["Sleeps 5","2 bedrooms","Pool + kids\' pool","100 m to the sand"]', 'facts:["Sleeps 5","2 bedrooms","Pool + kids\' pool","Fiber internet + WiFi"]'],
-  ['facts:["5 slaapplaatsen","2 slaapkamers","Zwembad + kinderbad","100 m van het zand"]', 'facts:["5 slaapplaatsen","2 slaapkamers","Zwembad + kinderbad","Glasvezel internet + WIFI"]'],
-  ['facts:["5 plazas","2 dormitorios","Piscina + piscina infantil","100 m de la arena"]', 'facts:["5 plazas","2 dormitorios","Piscina + piscina infantil","Internet de fibra + WiFi"]'],
-  ['facts:["5 couchages","2 chambres","Piscine + pataugeoire","100 m du sable"]', 'facts:["5 couchages","2 chambres","Piscine + pataugeoire","Internet fibre + WiFi"]'],
+  // Hero facts: retain the beach distance and add WiFi as a fifth fact.
+  ['facts:["Sleeps 5","2 bedrooms","Pool + kids\' pool","100 m to the sand"]', 'facts:["Sleeps 5","2 bedrooms","Pool + kids\' pool","100 m to the sand","Fiber internet + WiFi"]'],
+  ['facts:["5 slaapplaatsen","2 slaapkamers","Zwembad + kinderbad","100 m van het zand"]', 'facts:["5 slaapplaatsen","2 slaapkamers","Zwembad + kinderbad","100 m van het zand","Glasvezel internet + WIFI"]'],
+  ['facts:["5 plazas","2 dormitorios","Piscina + piscina infantil","100 m de la arena"]', 'facts:["5 plazas","2 dormitorios","Piscina + piscina infantil","100 m de la arena","Internet de fibra + WiFi"]'],
+  ['facts:["5 couchages","2 chambres","Piscine + pataugeoire","100 m du sable"]', 'facts:["5 couchages","2 chambres","Piscine + pataugeoire","100 m du sable","Internet fibre + WiFi"]'],
+  ['facts:["Sleeps 5","2 bedrooms","Pool + kids\' pool","Fiber internet + WiFi"]', 'facts:["Sleeps 5","2 bedrooms","Pool + kids\' pool","100 m to the sand","Fiber internet + WiFi"]'],
+  ['facts:["5 slaapplaatsen","2 slaapkamers","Zwembad + kinderbad","Glasvezel internet + WIFI"]', 'facts:["5 slaapplaatsen","2 slaapkamers","Zwembad + kinderbad","100 m van het zand","Glasvezel internet + WIFI"]'],
+  ['facts:["5 plazas","2 dormitorios","Piscina + piscina infantil","Internet de fibra + WiFi"]', 'facts:["5 plazas","2 dormitorios","Piscina + piscina infantil","100 m de la arena","Internet de fibra + WiFi"]'],
+  ['facts:["5 couchages","2 chambres","Piscine + pataugeoire","Internet fibre + WiFi"]', 'facts:["5 couchages","2 chambres","Piscine + pataugeoire","100 m du sable","Internet fibre + WiFi"]'],
+
+  // Use a Lucide WiFi icon alongside the four existing hero icons.
+  ['const ov=[zj,bj,Hj,Rj];', 'const heroWifiIcon=Ze("Wifi",[["path",{d:"M12 20h.01",key:"zekei9"}],["path",{d:"M2 8.82a15 15 0 0 1 20 0",key:"dnpr2z"}],["path",{d:"M5 12.859a10 10 0 0 1 14 0",key:"1x1e6c"}],["path",{d:"M8.5 16.429a5 5 0 0 1 7 0",key:"1bycff"}]]),ov=[zj,bj,Hj,Rj,heroWifiIcon];'],
 
   // Highlights: concrete benefits rather than abstract marketing language.
   ['Everything that matters, in one view.', "What's included in your stay."],
