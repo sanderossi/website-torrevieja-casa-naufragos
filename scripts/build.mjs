@@ -48,9 +48,12 @@ if (js.includes(oldLogoAsset)) {
 }
 
 const oldHeaderBrand = 'children:[b.jsx("img",{"data-loc":"client/src/components/Header.tsx:41",src:Mt.logo,alt:"Casa Náufragos logo",className:"h-11 w-11 object-contain drop-shadow-[0_2px_6px_rgba(43,38,32,0.25)]"}),b.jsxs("span",{"data-loc":"client/src/components/Header.tsx:42",className:"flex flex-col leading-none text-left",children:[b.jsxs("span",{"data-loc":"client/src/components/Header.tsx:43",className:"font-display text-xl tracking-tight whitespace-nowrap",children:["Casa ",b.jsx("span",{"data-loc":"client/src/components/Header.tsx:44",className:"text-terracotta",children:"Náufragos"})]}),b.jsx("span",{"data-loc":"client/src/components/Header.tsx:46",className:"mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/55 whitespace-nowrap",children:"Torrevieja · 100 m"})]})]';
+const previousHeaderBrand = 'children:[b.jsx("img",{"data-loc":"client/src/components/Header.tsx:41",src:Mt.logo,alt:"Casa Náufragos — Torrevieja, 100 m from the beach",className:"h-auto w-[clamp(10.5rem,15vw,13.5rem)] max-w-[52vw] object-contain"})]';
 const newHeaderBrand = 'children:[b.jsx("img",{"data-loc":"client/src/components/Header.tsx:41",src:Mt.logo,alt:"Casa Náufragos — Torrevieja, 100 m from the beach",style:{width:"clamp(168px, 15vw, 216px)",height:"auto",maxWidth:"52vw",objectFit:"contain"}})]';
 if (js.includes(oldHeaderBrand)) {
   js = js.replace(oldHeaderBrand, newHeaderBrand);
+} else if (js.includes(previousHeaderBrand)) {
+  js = js.replace(previousHeaderBrand, newHeaderBrand);
 } else if (!js.includes(newHeaderBrand)) {
   throw new Error('Header brand signature not found; refusing to build with mixed logo versions');
 }
@@ -58,11 +61,18 @@ js = js.replace(
   'className:"flex items-center gap-3 group shrink-0",children:[b.jsx("img",{"data-loc":"client/src/components/Header.tsx:41"',
   'className:"flex items-center group shrink-0",style:{backgroundColor:"rgba(250,247,242,.92)",padding:"6px 10px",borderRadius:"12px",boxShadow:"0 2px 10px rgba(43,38,32,.14)",backdropFilter:"blur(2px)"},children:[b.jsx("img",{"data-loc":"client/src/components/Header.tsx:41"'
 );
+js = js.replace(
+  'className:"flex items-center group shrink-0 rounded-xl bg-[#FAF7F2]/90 px-2.5 py-1.5 shadow-sm backdrop-blur-[2px]",children:[b.jsx("img",{"data-loc":"client/src/components/Header.tsx:41"',
+  'className:"flex items-center group shrink-0",style:{backgroundColor:"rgba(250,247,242,.92)",padding:"6px 10px",borderRadius:"12px",boxShadow:"0 2px 10px rgba(43,38,32,.14)",backdropFilter:"blur(2px)"},children:[b.jsx("img",{"data-loc":"client/src/components/Header.tsx:41"'
+);
 
 const oldFooterBrand = 'b.jsxs("div",{"data-loc":"client/src/components/Footer.tsx:11",className:"flex items-center gap-2.5",children:[b.jsx("img",{"data-loc":"client/src/components/Footer.tsx:12",src:Mt.logo,alt:"",className:"h-11 w-11 object-contain"}),b.jsxs("span",{"data-loc":"client/src/components/Footer.tsx:13",className:"font-display text-xl text-white",children:["Casa ",b.jsx("span",{"data-loc":"client/src/components/Footer.tsx:14",className:"text-[#E8835A]",children:"Náufragos"})]})]})';
+const previousFooterBrand = 'b.jsx("div",{"data-loc":"client/src/components/Footer.tsx:11",className:"rounded-2xl bg-[#FAF7F2] px-4 py-3 shadow-sm",children:b.jsx("img",{"data-loc":"client/src/components/Footer.tsx:12",src:Mt.logo,alt:"Casa Náufragos — Torrevieja, 100 m from the beach",className:"h-auto w-[min(78vw,22rem)] object-contain"})})';
 const newFooterBrand = 'b.jsx("div",{"data-loc":"client/src/components/Footer.tsx:11",style:{display:"inline-flex",backgroundColor:"#FAF7F2",padding:"12px 16px",borderRadius:"16px",boxShadow:"0 2px 10px rgba(0,0,0,.12)"},children:b.jsx("img",{"data-loc":"client/src/components/Footer.tsx:12",src:Mt.logo,alt:"Casa Náufragos — Torrevieja, 100 m from the beach",style:{width:"min(78vw, 352px)",height:"auto",objectFit:"contain"}})})';
 if (js.includes(oldFooterBrand)) {
   js = js.replace(oldFooterBrand, newFooterBrand);
+} else if (js.includes(previousFooterBrand)) {
+  js = js.replace(previousFooterBrand, newFooterBrand);
 } else if (!js.includes(newFooterBrand)) {
   throw new Error('Footer brand signature not found; refusing to build with mixed logo versions');
 }
