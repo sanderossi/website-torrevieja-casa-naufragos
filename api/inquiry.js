@@ -2,7 +2,10 @@ import tls from "node:tls";
 import bookings from "../data/bookings.js";
 
 const GMAIL_USER = process.env.GMAIL_USER || "sanderossi@gmail.com";
-const RECIPIENTS = ["heidieespana@gmail.com", "sander@webstate.nl"];
+const PRIMARY_RECIPIENT = "heidieespana@gmail.com";
+const BCC_RECIPIENT = "sander@webstate.nl";
+// Keep the BCC recipient in the SMTP envelope only, never in visible message headers.
+const ENVELOPE_RECIPIENTS = [PRIMARY_RECIPIENT, BCC_RECIPIENT];
 
 function isEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 320;
@@ -64,7 +67,7 @@ function buildMessage(input) {
     "— Verstuurd vanaf het contactformulier op Casa Náufragos"
   ].join("\n");
   const headers = [
-    `From: Casa Náufragos <${GMAIL_USER}>`, `To: ${RECIPIENTS.join(", ")}`,
+    `From: Casa Náufragos <${GMAIL_USER}>`, `To: ${PRIMARY_RECIPIENT}`,
     `Reply-To: ${safeHeader(input.name)} <${safeHeader(input.email)}>`,
     `Subject: ${encodeHeader(subject)}`, "MIME-Version: 1.0",
     "Content-Type: text/plain; charset=UTF-8", "Content-Transfer-Encoding: base64",
@@ -93,8 +96,8 @@ function smtpSend(message, appPassword) {
             else {stage=3;send(Buffer.from(appPassword.replace(/\s+/g,"")).toString("base64"));}
           }
           else if (stage===3 && code===235) {stage=4;send(`MAIL FROM:<${GMAIL_USER}>`);}
-          else if (stage===4 && code===250) {stage=5;send(`RCPT TO:<${RECIPIENTS[0]}>`);}
-          else if (stage===5 && code===250) {stage=6;send(`RCPT TO:<${RECIPIENTS[1]}>`);}
+          else if (stage===4 && code===250) {stage=5;send(`RCPT TO:<${ENVELOPE_RECIPIENTS[0]}>`);}
+          else if (stage===5 && code===250) {stage=6;send(`RCPT TO:<${ENVELOPE_RECIPIENTS[1]}>`);}
           else if (stage===6 && code===250) {stage=7;send("DATA");}
           else if (stage===7 && code===354) {stage=8;socket.write(`${message.replace(/^\./gm,"..")}\r\n.\r\n`);}
           else if (stage===8 && code===250) {stage=9;send("QUIT");}
