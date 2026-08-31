@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="260" viewBox="0 0 980 260" role="img" aria-labelledby="title desc">
+  <title id="title">Casa Náufragos</title>
+  <desc id="desc">Mediterranean arch, sun and sea with the Casa Náufragos wordmark.</desc>
+
+  <g transform="translate(12 10)">
+    <circle cx="169" cy="54" r="31" fill="#FFD9A8"/>
+    <path d="M38 220V116C38 59 78 20 130 20s92 39 92 96v104"
+          fill="none" stroke="#C4552D" stroke-width="18" stroke-linecap="round"/>
+    <path d="M72 151c18-12 36-12 54 0s36 12 54 0"
+          fill="none" stroke="#466870" stroke-width="9" stroke-linecap="round"/>
+    <path d="M72 183c18-12 36-12 54 0s36 12 54 0"
+          fill="none" stroke="#466870" stroke-width="9" stroke-linecap="round"/>
+  </g>
+
+  <text x="275" y="112" font-family="Georgia, 'Times New Roman', serif" font-size="72" font-weight="700" letter-spacing="-1.5">
+    <tspan fill="#2B2620">Casa</tspan><tspan dx="15" fill="#C4552D">Náufragos</tspan>
+  </text>
+  <path d="M278 135c110-5 212 5 329 0s210-3 296 1"
+        fill="none" stroke="#C4552D" stroke-width="5" stroke-linecap="round" opacity="0.48"/>
+  <text x="279" y="184" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" letter-spacing="5" fill="#466870">
+    TORREVIEJA · 100 M VAN HET STRAND
+  </text>
+</svg>
