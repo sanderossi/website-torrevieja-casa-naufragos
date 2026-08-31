@@ -7,6 +7,6 @@
 export default [
   {
     arrival: '2026-12-18',
-    departure: '2027-01-01',
+    departure: '2027-01-27',
   },
 ];
