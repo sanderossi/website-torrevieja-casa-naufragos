@@ -2,7 +2,7 @@ import tls from "node:tls";
 import bookings from "../data/bookings.js";
 
 const GMAIL_USER = process.env.GMAIL_USER || "sanderossi@gmail.com";
-const RECIPIENTS = ["hayatie@hotmail.com", "sander@webstate.nl"];
+const RECIPIENTS = ["heidieespana@gmail.com", "sander@webstate.nl"];
 
 function isEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 320;
