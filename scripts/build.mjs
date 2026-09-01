@@ -361,6 +361,23 @@ for (const entry of faqCanonical) {
 
 js = js.replaceAll('Lidl, Aldi, Action', 'Lidl, Basic-Fit, Action');
 
+// Older vendored bundles can contain repeated copies of the beach FAQ.
+// Retain one identical entry per language so a rebuild preserves the live layout.
+const beachQuestions = new Set([
+  'What facilities are available at Playa de Los Náufragos?',
+  'Welke voorzieningen zijn er op Playa de Los Náufragos?',
+  '¿Qué servicios hay en Playa de Los Náufragos?',
+  'Quels équipements trouve-t-on à Playa de Los Náufragos ?'
+]);
+const seenBeachEntries = new Set();
+js = js.replace(/(,?)\{q:"((?:[^"\\]|\\.)*)",a:"(?:[^"\\]|\\.)*"\}/g, (entry, comma, question) => {
+  if (!beachQuestions.has(question)) return entry;
+  const key = entry.slice(comma.length);
+  if (seenBeachEntries.has(key)) return '';
+  seenBeachEntries.add(key);
+  return entry;
+});
+
 function dateParts(iso) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
   if (!match) throw new Error(`Invalid booking date: ${iso}`);
