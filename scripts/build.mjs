@@ -301,13 +301,13 @@ const textReplacements = [
   ["Pas de tabac à l'intérieur, et le calme entre 22 h et 8 h — c'est une résidence habitée à l'année et les voisins sont adorables.", "Pas de tabac à l’intérieur. Nous demandons de respecter le calme entre 22 h et 8 h, car il s’agit d’une résidence."],
 
   // Contact: conversational, concrete and outcome-focused.
-  ['Check availability & request your quote.', 'Choose your dates. Heidi will let you know if they are available.'],
+  ['Check availability & request your quote.', 'Choose your dates. Heidie will let you know if they are available.'],
   ['Pick your arrival and departure dates below and send your request — no booking obligation. I reply personally and fast: always within one day, usually much sooner.', 'Select your arrival and departure dates and leave your details. You will receive a personal reply within one day.'],
-  ['Check de beschikbaarheid en vraag je offerte aan.', 'Kies je data. Heidi laat je weten of ze vrij zijn.'],
+  ['Check de beschikbaarheid en vraag je offerte aan.', 'Kies je data. Heidie laat je weten of ze vrij zijn.'],
   ['Kies hieronder je aankomst- en vertrekdatum en verstuur je aanvraag — geen boekingsverplichting. Ik reageer persoonlijk en snel: sowieso binnen één dag, meestal veel eerder.', 'Selecteer aankomst en vertrek en laat je gegevens achter. Je krijgt binnen één dag persoonlijk antwoord.'],
-  ['Comprueba la disponibilidad y pide tu presupuesto.', 'Elige tus fechas. Heidi te dirá si están disponibles.'],
+  ['Comprueba la disponibilidad y pide tu presupuesto.', 'Elige tus fechas. Heidie te dirá si están disponibles.'],
   ['Elige abajo tus fechas de llegada y salida y envía tu solicitud — sin compromiso de reserva. Respondo personalmente y rápido: siempre en un día, normalmente mucho antes.', 'Selecciona llegada y salida y deja tus datos. Recibirás una respuesta personal en el plazo de un día.'],
-  ['Vérifiez la disponibilité et demandez votre devis.', 'Choisissez vos dates. Heidi vous dira si elles sont disponibles.'],
+  ['Vérifiez la disponibilité et demandez votre devis.', 'Choisissez vos dates. Heidie vous dira si elles sont disponibles.'],
   ["Choisissez ci-dessous vos dates d'arrivée et de départ puis envoyez votre demande — sans aucune obligation de réservation. Je réponds personnellement et vite : toujours sous un jour, généralement bien plus tôt.", "Sélectionnez votre arrivée et votre départ puis laissez vos coordonnées. Vous recevrez une réponse personnelle sous un jour."],
 
   ['Request my quote', 'Request my price & availability'],
@@ -317,6 +317,10 @@ const textReplacements = [
 ];
 
 for (const [from, to] of textReplacements) js = js.replaceAll(from, to);
+
+// Correct the host's name in every language, including the linked-name renderer.
+// Whole-word matching leaves existing Heidie names and email addresses intact.
+js = js.replace(/\bHeidi\b/g, 'Heidie');
 
 // Normalize the citrus-press labels. Earlier incremental builds could otherwise
 // accumulate repeated adjectives in Spanish and French.
@@ -402,6 +406,8 @@ if (html.includes(oldFavicon)) {
   throw new Error('Favicon signature not found; refusing to build with an unknown browser icon');
 }
 html = html.replace('index-DYBGkSYM.js?v=site-20260830-copy-1', 'index-DYBGkSYM.js?v=site-20260831-logo-1');
+html = html.replace(/index-DYBGkSYM\.js\?v=[^"']+/g, 'index-DYBGkSYM.js?v=site-20260901-heidie-1');
+html = html.replace(/site-fixes\.js\?v=[^"']+/g, 'site-fixes.js?v=20260901-heidie-1');
 await writeFile(htmlPath, html, 'utf8');
 
 console.log(`Casa Naufragos standalone build complete — ${bookings.length} booked period(s) baked into calendar`);

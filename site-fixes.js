@@ -47,19 +47,19 @@
   const contactNarrative = {
     en: {
       empty: 'Choose your arrival and departure dates on the left. Then enter your name, number of guests and email address.',
-      selected: (arrival, departure) => `You selected ${arrival} to ${departure}. How many people are coming? Leave your name and email address and Heidi will confirm availability and the applicable rate.`
+      selected: (arrival, departure) => `You selected ${arrival} to ${departure}. How many people are coming? Leave your name and email address and Heidie will confirm availability and the applicable rate.`
     },
     nl: {
       empty: 'Kies links je aankomst- en vertrekdatum. Vul daarna alleen nog je naam, het aantal personen en je e-mailadres in.',
-      selected: (arrival, departure) => `Je hebt ${arrival} t/m ${departure} geselecteerd. Met hoeveel personen kom je? Laat je naam en e-mailadres achter; Heidi laat je weten of de data nog vrij zijn en welk tarief geldt.`
+      selected: (arrival, departure) => `Je hebt ${arrival} t/m ${departure} geselecteerd. Met hoeveel personen kom je? Laat je naam en e-mailadres achter; Heidie laat je weten of de data nog vrij zijn en welk tarief geldt.`
     },
     es: {
       empty: 'Elige a la izquierda tus fechas de llegada y salida. Después solo tienes que indicar tu nombre, número de personas y correo electrónico.',
-      selected: (arrival, departure) => `Has seleccionado del ${arrival} al ${departure}. ¿Cuántas personas vienen? Deja tu nombre y correo electrónico y Heidi confirmará la disponibilidad y la tarifa aplicable.`
+      selected: (arrival, departure) => `Has seleccionado del ${arrival} al ${departure}. ¿Cuántas personas vienen? Deja tu nombre y correo electrónico y Heidie confirmará la disponibilidad y la tarifa aplicable.`
     },
     fr: {
       empty: 'Choisissez à gauche vos dates d’arrivée et de départ. Il ne reste ensuite qu’à indiquer votre nom, le nombre de personnes et votre adresse e-mail.',
-      selected: (arrival, departure) => `Vous avez sélectionné du ${arrival} au ${departure}. Combien de personnes viennent ? Indiquez votre nom et votre adresse e-mail ; Heidi confirmera la disponibilité et le tarif applicable.`
+      selected: (arrival, departure) => `Vous avez sélectionné du ${arrival} au ${departure}. Combien de personnes viennent ? Indiquez votre nom et votre adresse e-mail ; Heidie confirmera la disponibilité et le tarif applicable.`
     }
   };
 

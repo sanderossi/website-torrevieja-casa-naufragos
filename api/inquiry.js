@@ -54,26 +54,78 @@ function validate(body) {
   if (!["en","nl","es","fr"].includes(lang)) throw new Error("Invalid language");
   return { arrival, departure, arrivalIso, departureIso, nights, guests, name, email, message, lang };
 }
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+function encodeBody(value) {
+  return Buffer.from(value, "utf8").toString("base64").replace(/(.{76})/g, "$1\r\n");
+}
 function buildMessage(input) {
   const langNames = { en:"Engels", nl:"Nederlands", es:"Spaans", fr:"Frans" };
-  const subject = `Aanvraag Casa Náufragos: ${input.arrival} → ${input.departure} (${input.name})`;
+  const subject = safeHeader(`Aanvraag ${input.name}`);
+  const fields = [
+    ["Aankomst", input.arrival],
+    ["Vertrek", input.departure],
+    ["Aantal nachten", input.nights],
+    ["Aantal personen", input.guests],
+    ["Naam", input.name],
+    ["E-mail", input.email],
+    ["Taal website", langNames[input.lang] ?? input.lang]
+  ];
   const text = [
-    "Nieuwe beschikbaarheidsaanvraag — Casa Náufragos", "",
-    `Aankomst:        ${input.arrival}`, `Vertrek:         ${input.departure}`,
-    `Aantal nachten:  ${input.nights}`, `Aantal personen: ${input.guests}`,
-    `Naam:            ${input.name}`, `E-mail:          ${input.email}`,
-    `Taal website:    ${langNames[input.lang] ?? input.lang}`, "",
-    input.message ? `Bericht van de aanvrager:\n${input.message}` : "(geen bericht meegegeven)", "",
+    ...fields.map(([label, value]) => `${label.padEnd(16)} ${value}`),
+    "",
+    "Bericht",
+    input.message || "(geen bericht meegegeven)",
+    "",
     "— Verstuurd vanaf het contactformulier op Casa Náufragos"
   ].join("\n");
+  const rows = fields.map(([label, value]) => `
+    <tr>
+      <td style="padding:4px 22px 4px 0;vertical-align:top;color:#466870;font-weight:600;white-space:nowrap;">${escapeHtml(label)}</td>
+      <td style="padding:4px 0;vertical-align:top;color:#2b2620;">${escapeHtml(value)}</td>
+    </tr>`).join("");
+  const html = `<!doctype html>
+<html lang="nl">
+  <body style="margin:0;padding:0;background:#ffffff;">
+    <div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.5;color:#2b2620;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+        ${rows}
+      </table>
+      <div style="margin-top:18px;color:#466870;font-weight:600;">Bericht</div>
+      <div style="margin-top:4px;white-space:pre-wrap;color:#2b2620;">${escapeHtml(input.message || "(geen bericht meegegeven)")}</div>
+      <div style="margin-top:22px;color:#7b7771;font-size:12px;">— Verstuurd vanaf het contactformulier op Casa Náufragos</div>
+    </div>
+  </body>
+</html>`;
+  const boundary = `casa-naufragos-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   const headers = [
     `From: Casa Náufragos <${GMAIL_USER}>`, `To: ${PRIMARY_RECIPIENT}`,
     `Reply-To: ${safeHeader(input.name)} <${safeHeader(input.email)}>`,
     `Subject: ${encodeHeader(subject)}`, "MIME-Version: 1.0",
-    "Content-Type: text/plain; charset=UTF-8", "Content-Transfer-Encoding: base64",
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
     `Date: ${new Date().toUTCString()}`, `Message-ID: <${Date.now()}.${Math.random().toString(36).slice(2)}@casa-naufragos>`
   ];
-  return `${headers.join("\r\n")}\r\n\r\n${Buffer.from(text,"utf8").toString("base64").replace(/(.{76})/g,"$1\r\n")}\r\n`;
+  const body = [
+    `--${boundary}`,
+    "Content-Type: text/plain; charset=UTF-8",
+    "Content-Transfer-Encoding: base64",
+    "",
+    encodeBody(text),
+    `--${boundary}`,
+    "Content-Type: text/html; charset=UTF-8",
+    "Content-Transfer-Encoding: base64",
+    "",
+    encodeBody(html),
+    `--${boundary}--`,
+    ""
+  ].join("\r\n");
+  return `${headers.join("\r\n")}\r\n\r\n${body}`;
 }
 function smtpSend(message, appPassword) {
   return new Promise((resolve, reject) => {
