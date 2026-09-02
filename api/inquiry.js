@@ -78,10 +78,10 @@ function buildMessage(input) {
     ["Taal website", langNames[input.lang] ?? input.lang]
   ];
   const text = [
-    ...fields.map(([label, value]) => `${label.padEnd(16)} ${value}`),
-    "",
     "Bericht",
     input.message || "(geen bericht meegegeven)",
+    "",
+    ...fields.map(([label, value]) => `${label.padEnd(16)} ${value}`),
     "",
     "— Verstuurd vanaf het contactformulier op Casa Náufragos"
   ].join("\n");
@@ -94,11 +94,11 @@ function buildMessage(input) {
 <html lang="nl">
   <body style="margin:0;padding:0;background:#ffffff;">
     <div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.5;color:#2b2620;">
+      <div style="color:#466870;font-weight:600;">Bericht</div>
+      <div style="margin-top:4px;margin-bottom:18px;white-space:pre-wrap;color:#2b2620;">${escapeHtml(input.message || "(geen bericht meegegeven)")}</div>
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
         ${rows}
       </table>
-      <div style="margin-top:18px;color:#466870;font-weight:600;">Bericht</div>
-      <div style="margin-top:4px;white-space:pre-wrap;color:#2b2620;">${escapeHtml(input.message || "(geen bericht meegegeven)")}</div>
       <div style="margin-top:22px;color:#7b7771;font-size:12px;">— Verstuurd vanaf het contactformulier op Casa Náufragos</div>
     </div>
   </body>
