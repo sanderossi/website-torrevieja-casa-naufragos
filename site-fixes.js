@@ -69,6 +69,30 @@
     }
   };
 
+  // Keep the sleeping capacity consistent in all four website languages.
+  // The fixed beds sleep five people; +1 is a separate folding guest bed.
+  const sleepingCapacityReplacements = new Map([
+    ['Sleeps 5', 'Sleeps 5 + 1'],
+    ['A bright first-floor corner apartment — quiet, private, and fully equipped for a family of five.', 'A bright first-floor corner apartment — quiet, private, and fully equipped for 5 guests, with an extra folding guest bed for a 6th person.'],
+    ['Two bedrooms, five beds', 'Two bedrooms: sleeps 5 + 1'],
+    ['A family room with a double and a single bed, plus a second double bedroom with wooden shutters and a big wardrobe. A sixth folding guest bed is also available. Air conditioning in both — sleep cool even in August.', 'A family room with a double and a single bed, plus a second double bedroom with wooden shutters and a big wardrobe. In addition, a folding guest bed is available as an extra sleeping place for a 6th person. Air conditioning in both — sleep cool even in August.'],
+
+    ['5 slaapplaatsen', '5 + 1 slaapplaatsen'],
+    ['Een licht hoekappartement op de eerste verdieping — rustig, privé en compleet ingericht voor een gezin van vijf.', 'Een licht hoekappartement op de eerste verdieping — rustig, privé en compleet ingericht voor 5 personen, met een extra opklapbaar logeerbed voor een 6e persoon.'],
+    ['Twee slaapkamers, vijf bedden', 'Twee slaapkamers: 5 + 1 slaapplaatsen'],
+    ['Een familiekamer met een tweepersoons- en een eenpersoonsbed, plus een tweede tweepersoonsslaapkamer met houten luiken en een grote kledingkast. Daarnaast is er een zesde, opklapbaar logeerbed beschikbaar. Airco in beide kamers — zelfs in augustus koel slapen.', 'Een familiekamer met een tweepersoons- en een eenpersoonsbed, plus een tweede tweepersoonsslaapkamer met houten luiken en een grote kledingkast. Daarnaast is er een opklapbaar logeerbed beschikbaar als extra slaapplaats voor een 6e persoon. Airco in beide kamers — zelfs in augustus koel slapen.'],
+
+    ['5 plazas', '5 + 1 plazas'],
+    ['Un luminoso apartamento en esquina en primera planta — tranquilo, privado y totalmente equipado para una familia de cinco.', 'Un luminoso apartamento en esquina en primera planta — tranquilo, privado y totalmente equipado para 5 personas, con una cama plegable adicional para una 6.ª persona.'],
+    ['Dos dormitorios, cinco camas', 'Dos dormitorios: 5 + 1 plazas'],
+    ['Una habitación familiar con cama doble e individual, más un segundo dormitorio doble con persianas de madera y un gran armario. También hay disponible una sexta cama plegable para invitados. Aire acondicionado en ambos — duerme fresco incluso en agosto.', 'Una habitación familiar con cama doble e individual, más un segundo dormitorio doble con persianas de madera y un gran armario. Además, hay una cama plegable para invitados disponible como plaza adicional para una 6.ª persona. Aire acondicionado en ambos — duerme fresco incluso en agosto.'],
+
+    ['5 couchages', '5 + 1 couchages'],
+    ["Un appartement d'angle lumineux au premier étage — calme, privé et entièrement équipé pour une famille de cinq.", "Un appartement d'angle lumineux au premier étage — calme, privé et entièrement équipé pour 5 personnes, avec un lit d’appoint pliant supplémentaire pour une 6e personne."],
+    ['Deux chambres, cinq lits', 'Deux chambres : 5 + 1 couchages'],
+    ['Une chambre familiale avec un lit double et un lit simple, plus une deuxième chambre double avec volets en bois et grande armoire. Un sixième lit d’appoint pliant est également disponible. Climatisation dans les deux — dormez au frais même en août.', 'Une chambre familiale avec un lit double et un lit simple, plus une deuxième chambre double avec volets en bois et grande armoire. Un lit d’appoint pliant est également disponible comme couchage supplémentaire pour une 6e personne. Climatisation dans les deux — dormez au frais même en août.']
+  ]);
+
   const streetviewUrl = 'https://maps.app.goo.gl/j8VT1WMnkpdMV8GcA';
   const streetviewLabels = {
     en: 'View on Google Street View',
@@ -169,6 +193,25 @@
     copy.items.forEach((text, index) => setTextPreservingIcon(items[index], text));
   }
 
+  function syncSleepingCapacity() {
+    const main = document.querySelector('main');
+    if (!main) return;
+    const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+
+    for (const node of nodes) {
+      const parent = node.parentElement;
+      if (!parent || parent.closest('script,style,textarea,input,option')) continue;
+      const raw = node.nodeValue || '';
+      const trimmed = raw.trim();
+      const replacement = sleepingCapacityReplacements.get(trimmed);
+      if (!replacement) continue;
+      const start = raw.indexOf(trimmed);
+      node.nodeValue = raw.slice(0, start) + replacement + raw.slice(start + trimmed.length);
+    }
+  }
+
   function moveGalleryAfterIntro() {
     const highlights = document.getElementById('highlights');
     const gallery = document.getElementById('gallery');
@@ -267,6 +310,7 @@
     removeVisibleEmailRoutes();
     setStreetviewButtons();
     syncHighlightLanguage();
+    syncSleepingCapacity();
     syncContactNarrative();
     linkPlaces();
     linkFaqToPricing();
