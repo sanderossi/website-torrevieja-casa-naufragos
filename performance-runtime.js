@@ -137,6 +137,10 @@
 
   document.addEventListener('DOMContentLoaded',()=>{
     attachTargetedObservers();
-    window.MutationObserver=NativeMutationObserver;
+    setTimeout(()=>{
+      if(window.MutationObserver===OptimizedMutationObserver){
+        window.MutationObserver=NativeMutationObserver;
+      }
+    },0);
   },{once:true});
 })();
