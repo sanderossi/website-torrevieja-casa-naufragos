@@ -85,6 +85,48 @@
 
   window.MutationObserver=OptimizedMutationObserver;
 
+  const parasolLabels=new Set([
+    '3 beach chairs to take along',
+    '3 strandstoelen om mee te nemen',
+    '3 sillas de playa para llevar',
+    '3 chaises de plage à emporter'
+  ]);
+  let parasolObserver=null;
+  let parasolQueued=false;
+
+  function patchParasolIcon(){
+    parasolQueued=false;
+    const apartment=document.getElementById('apartment');
+    if(!apartment)return false;
+    const walker=document.createTreeWalker(apartment,NodeFilter.SHOW_TEXT);
+    while(walker.nextNode()){
+      const text=(walker.currentNode.nodeValue||'').trim();
+      if(!parasolLabels.has(text))continue;
+      let element=walker.currentNode.parentElement;
+      for(let depth=0;depth<6&&element&&element!==apartment;depth++,element=element.parentElement){
+        const svg=element.querySelector('svg');
+        if(!svg)continue;
+        if(svg.dataset.casaIcon==='parasol')return true;
+        svg.setAttribute('viewBox','0 0 24 24');
+        svg.setAttribute('fill','none');
+        svg.setAttribute('stroke','currentColor');
+        svg.setAttribute('stroke-width','2');
+        svg.setAttribute('stroke-linecap','round');
+        svg.setAttribute('stroke-linejoin','round');
+        svg.innerHTML='<path d="M12.5 11.134 18.196 21"></path><path d="M20.425 5.299a10 10 0 0 0-16.941 9.78c.183.563.843.774 1.355.478L20.16 6.711c.512-.296.66-.973.264-1.413"></path><path d="M21 21H3"></path>';
+        svg.dataset.casaIcon='parasol';
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function scheduleParasolPatch(){
+    if(parasolQueued)return;
+    parasolQueued=true;
+    requestAnimationFrame(patchParasolIcon);
+  }
+
   const contactCopy={
     en:{empty:'Choose your arrival and departure dates on the left. Then enter your name, number of guests and email address.',selected:(arrival,departure)=>`You selected ${arrival} to ${departure}. How many people are coming? Leave your name and email address and Heidie will confirm availability and the applicable rate.`},
     nl:{empty:'Kies links je aankomst- en vertrekdatum. Vul daarna alleen nog je naam, het aantal personen en je e-mailadres in.',selected:(arrival,departure)=>`Je hebt ${arrival} t/m ${departure} geselecteerd. Met hoeveel personen kom je? Laat je naam en e-mailadres achter; Heidie laat je weten of de data nog vrij zijn en welk tarief geldt.`},
@@ -136,6 +178,13 @@
       headerObserver.observe(header,{childList:true,subtree:true});
     }
 
+    const apartment=document.getElementById('apartment');
+    if(apartment&&!parasolObserver){
+      parasolObserver=new NativeMutationObserver(scheduleParasolPatch);
+      parasolObserver.observe(apartment,{childList:true,subtree:true,characterData:true});
+      scheduleParasolPatch();
+    }
+
     const contact=document.getElementById('contact');
     if(contact&&!contactObserver){
       contactObserver=new NativeMutationObserver(scheduleContactNarrative);
@@ -143,11 +192,11 @@
       scheduleContactNarrative();
     }
 
-    if(header&&contact&&targetBootObserver){
+    if(header&&apartment&&contact&&targetBootObserver){
       targetBootObserver.disconnect();
       targetBootObserver=null;
     }
-    return !!(header&&contact);
+    return !!(header&&apartment&&contact);
   }
 
   if(!attachTargetedObservers()){
