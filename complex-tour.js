@@ -4,29 +4,37 @@
 
   const copy = {
     nl: {
-      kicker: 'Even binnenkijken',
-      title: 'Zo ziet het complex eruit.',
-      text: 'Een korte blik op Casa Náufragos: de binnenplaats, de zwembaden en de trappen van het complex.'
+      kicker: 'Foto’s & video',
+      title: 'Een kijkje in het complex.',
+      text: 'Loop in een paar seconden mee door de binnenplaats en richting het zwembad.',
+      apartmentLink: 'Bekijk foto’s'
     },
     en: {
-      kicker: 'Take a look around',
-      title: 'This is the complex.',
-      text: 'A quick look around Casa Náufragos: the courtyard, pools and stairways of the complex.'
+      kicker: 'Photos & video',
+      title: 'A look around the complex.',
+      text: 'Take a quick walk through the courtyard and towards the swimming pool.',
+      apartmentLink: 'View photos'
     },
     es: {
-      kicker: 'Un vistazo al complejo',
-      title: 'Así es el complejo.',
-      text: 'Un vistazo a Casa Náufragos: el patio, las piscinas y las escaleras del complejo.'
+      kicker: 'Fotos y vídeo',
+      title: 'Un vistazo al complejo.',
+      text: 'Recorre en unos segundos el patio y el camino hacia la piscina.',
+      apartmentLink: 'Ver fotos'
     },
     fr: {
-      kicker: 'Un aperçu de la résidence',
-      title: 'Voici la résidence.',
-      text: 'Un aperçu de Casa Náufragos : la cour, les piscines et les escaliers de la résidence.'
+      kicker: 'Photos & vidéo',
+      title: 'Un aperçu de la résidence.',
+      text: 'Parcourez en quelques secondes la cour et le chemin vers la piscine.',
+      apartmentLink: 'Voir les photos'
     }
   };
 
+  const apartmentNavLabels = new Set([
+    'apartment', 'appartement', 'apartamento'
+  ]);
+
   const css = `
-    #complex-tour { margin-top: 2.25rem; }
+    #complex-tour { margin: 0 0 3rem; }
     #complex-tour .ct-card {
       display: grid;
       grid-template-columns: minmax(0, 1fr) 280px;
@@ -79,8 +87,26 @@
       height: 100%;
       object-fit: cover;
     }
+    #apartment-gallery-link {
+      margin-top: 1.5rem;
+    }
+    #apartment-gallery-link a {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      color: #B44927;
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(180,73,39,.38);
+      padding-bottom: .15rem;
+      transition: opacity .15s ease, border-color .15s ease;
+    }
+    #apartment-gallery-link a:hover {
+      opacity: .76;
+      border-color: currentColor;
+    }
     @media (max-width: 700px) {
-      #complex-tour { margin-top: 1.75rem; }
+      #complex-tour { margin-bottom: 2rem; }
       #complex-tour .ct-card {
         grid-template-columns: 1fr;
         gap: 1.25rem;
@@ -102,27 +128,66 @@
     return copy[lang] ? lang : 'en';
   }
 
+  function ensureStyles() {
+    if (document.getElementById('complex-tour-style')) return;
+    const style = document.createElement('style');
+    style.id = 'complex-tour-style';
+    style.textContent = css;
+    document.head.appendChild(style);
+  }
+
   function updateText(block) {
     const t = copy[language()];
     block.querySelector('.ct-kicker').textContent = t.kicker;
     block.querySelector('.ct-title').textContent = t.title;
     block.querySelector('.ct-text').textContent = t.text;
+    const apartmentLink = document.querySelector('#apartment-gallery-link a');
+    if (apartmentLink) apartmentLink.textContent = `${t.apartmentLink} →`;
+  }
+
+  function findApartmentSection() {
+    const direct = document.getElementById('apartment');
+    if (direct) return direct;
+
+    const navLink = [...document.querySelectorAll('header a[href^="#"], nav a[href^="#"]')].find(anchor => {
+      const label = (anchor.textContent || '').trim().toLocaleLowerCase();
+      return apartmentNavLabels.has(label);
+    });
+    const href = navLink?.getAttribute('href');
+    if (href && href.startsWith('#')) {
+      try {
+        const target = document.querySelector(href);
+        if (target) return target;
+      } catch (_) {}
+    }
+    return null;
+  }
+
+  function ensureApartmentLink() {
+    if (document.getElementById('apartment-gallery-link')) return true;
+    const section = findApartmentSection();
+    const container = section?.querySelector('.container') || section;
+    if (!container) return false;
+
+    const wrapper = document.createElement('p');
+    wrapper.id = 'apartment-gallery-link';
+    const link = document.createElement('a');
+    link.href = '#gallery';
+    link.textContent = `${copy[language()].apartmentLink} →`;
+    wrapper.appendChild(link);
+    container.appendChild(wrapper);
+    return true;
   }
 
   function mount() {
+    ensureStyles();
+    ensureApartmentLink();
+
     if (document.getElementById('complex-tour')) return true;
 
-    const section = document.getElementById('location');
-    const container = section?.querySelector('.container');
-    const mapLink = container?.querySelector('a[href*="google.com/maps"], a[href*="maps.app.goo.gl"]');
-    if (!container || !mapLink) return false;
-
-    if (!document.getElementById('complex-tour-style')) {
-      const style = document.createElement('style');
-      style.id = 'complex-tour-style';
-      style.textContent = css;
-      document.head.appendChild(style);
-    }
+    const section = document.getElementById('gallery');
+    const container = section?.querySelector('.container') || section;
+    if (!container) return false;
 
     const block = document.createElement('div');
     block.id = 'complex-tour';
@@ -141,8 +206,9 @@
       </div>`;
     updateText(block);
 
-    const anchor = mapLink.closest('.reveal') || mapLink;
-    anchor.insertAdjacentElement('afterend', block);
+    // The video is deliberately the first visual content in Photos. Visitors
+    // landing on #gallery see the complex tour first and the photo gallery below it.
+    container.prepend(block);
 
     const video = block.querySelector('video');
     video.muted = true;
@@ -171,6 +237,7 @@
 
   if (!mount()) {
     const observer = new MutationObserver(() => {
+      ensureApartmentLink();
       if (mount()) observer.disconnect();
     });
     observer.observe(document.documentElement, { childList: true, subtree: true });
