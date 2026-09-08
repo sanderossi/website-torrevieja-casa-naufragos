@@ -3,6 +3,26 @@
   if(!NativeMutationObserver||window.__casaPerformanceRuntime)return;
   window.__casaPerformanceRuntime=true;
 
+  if(!document.getElementById('faq-active-color-fix')){
+    const style=document.createElement('style');
+    style.id='faq-active-color-fix';
+    style.textContent=`
+      #faq [data-slot="accordion-trigger"][data-state="open"],
+      #faq [data-slot="accordion-trigger"][aria-expanded="true"],
+      #faq [data-slot="accordion"] button[aria-expanded="true"][aria-controls],
+      #faq details[open] > summary {
+        color:#C4552D!important;
+      }
+      #faq [data-slot="accordion-trigger"][data-state="open"] svg,
+      #faq [data-slot="accordion-trigger"][aria-expanded="true"] svg,
+      #faq [data-slot="accordion"] button[aria-expanded="true"][aria-controls] svg,
+      #faq details[open] > summary svg {
+        color:inherit!important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   const optimizedObservers=new Set();
   let notifyQueued=false;
 
