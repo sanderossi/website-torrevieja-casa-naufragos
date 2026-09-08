@@ -204,7 +204,10 @@
     if (!header) return false;
 
     const t = navCopy[language()] || navCopy.en;
-    const candidates = [...header.querySelectorAll('a, button')];
+    // Only patch actual in-page navigation links. Never touch header buttons:
+    // on mobile the hamburger/menu trigger is a button and must remain entirely
+    // under React's control.
+    const candidates = [...header.querySelectorAll('nav a[href^="#"]')];
     let changed = false;
 
     for (const element of candidates) {
