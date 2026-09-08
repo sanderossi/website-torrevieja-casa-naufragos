@@ -29,6 +29,22 @@
     }
   };
 
+  const navCopy = {
+    nl: { apartment: 'Appartement', gallery: 'Foto’s', location: 'Ligging', pricing: 'Prijzen', availability: 'Check beschikbaarheid' },
+    en: { apartment: 'Apartment', gallery: 'Photos', location: 'Location', pricing: 'Prices', availability: 'Check availability' },
+    es: { apartment: 'Apartamento', gallery: 'Fotos', location: 'Ubicación', pricing: 'Precios', availability: 'Ver disponibilidad' },
+    fr: { apartment: 'Appartement', gallery: 'Photos', location: 'Emplacement', pricing: 'Tarifs', availability: 'Voir les disponibilités' }
+  };
+
+  const navTerms = {
+    apartment: new Set(['apartment', 'appartement', 'apartamento']),
+    gallery: new Set(['photos', 'photo', 'foto', 'fotos', "foto's", 'foto’s']),
+    location: new Set(['location', 'locatie', 'ligging', 'ubicación', 'ubicacion', 'emplacement']),
+    pricing: new Set(['prices', 'price', 'prijzen', 'precios', 'tarifs', 'tarif']),
+    faq: new Set(['faq', 'veelgestelde vragen', 'preguntas frecuentes', 'questions fréquentes', 'questions frequentes']),
+    contact: new Set(['contact', 'contacto', 'check availability', 'check beschikbaarheid', 'ver disponibilidad', 'voir les disponibilités', 'voir les disponibilites'])
+  };
+
   const apartmentNavLabels = new Set([
     'apartment', 'appartement', 'apartamento'
   ]);
@@ -105,6 +121,24 @@
       opacity: .76;
       border-color: currentColor;
     }
+    header .cn-nav-primary-cta {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: .55rem 1rem !important;
+      border-radius: 9999px !important;
+      background: #B44927 !important;
+      color: #fff !important;
+      font-weight: 600 !important;
+      text-decoration: none !important;
+      text-shadow: none !important;
+      box-shadow: 0 8px 22px -14px rgba(43,38,32,.65) !important;
+    }
+    header .cn-nav-primary-cta:hover {
+      background: #9f3e22 !important;
+      color: #fff !important;
+      text-shadow: none !important;
+    }
     @media (max-width: 700px) {
       #complex-tour { margin-bottom: 2rem; }
       #complex-tour .ct-card {
@@ -134,6 +168,72 @@
     style.id = 'complex-tour-style';
     style.textContent = css;
     document.head.appendChild(style);
+  }
+
+  function normalizedText(element) {
+    return (element.textContent || '').replace(/\s+/g, ' ').trim().toLocaleLowerCase();
+  }
+
+  function roleForNavigationItem(element) {
+    const href = (element.getAttribute?.('href') || '').toLowerCase();
+    if (href === '#apartment') return 'apartment';
+    if (href === '#gallery') return 'gallery';
+    if (href === '#location') return 'location';
+    if (href === '#pricing') return 'pricing';
+    if (href === '#faq') return 'faq';
+    if (href === '#contact') return 'contact';
+
+    const text = normalizedText(element);
+    for (const [role, terms] of Object.entries(navTerms)) {
+      if (terms.has(text)) return role;
+    }
+    return null;
+  }
+
+  function setNavigationText(element, text) {
+    if ((element.textContent || '').trim() === text) return;
+    const iconChildren = [...element.children].filter(child => child.tagName?.toLowerCase() === 'svg');
+    [...element.childNodes].forEach(node => {
+      if (!iconChildren.includes(node)) node.remove();
+    });
+    element.append(document.createTextNode(text));
+  }
+
+  function patchNavigation() {
+    const header = document.querySelector('header');
+    if (!header) return false;
+
+    const t = navCopy[language()] || navCopy.en;
+    const candidates = [...header.querySelectorAll('a, button')];
+    let changed = false;
+
+    for (const element of candidates) {
+      if (element.closest('[data-cn-nav-ignore]')) continue;
+      const role = roleForNavigationItem(element);
+      if (!role) continue;
+
+      if (role === 'faq') {
+        element.style.setProperty('display', 'none', 'important');
+        element.setAttribute('aria-hidden', 'true');
+        element.tabIndex = -1;
+        element.dataset.cnNavRole = 'faq';
+        changed = true;
+        continue;
+      }
+
+      const label = t[role === 'contact' ? 'availability' : role];
+      if (label) {
+        setNavigationText(element, label);
+        element.dataset.cnNavRole = role;
+        changed = true;
+      }
+
+      if (role === 'contact') {
+        element.classList.add('cn-nav-primary-cta');
+        element.setAttribute('aria-label', t.availability);
+      }
+    }
+    return changed;
   }
 
   function updateText(block) {
@@ -181,6 +281,7 @@
 
   function mount() {
     ensureStyles();
+    patchNavigation();
     ensureApartmentLink();
 
     if (document.getElementById('complex-tour')) return true;
@@ -227,19 +328,29 @@
       video.play().catch(() => {});
     }
 
-    new MutationObserver(() => updateText(block)).observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['lang']
-    });
-
     return true;
   }
 
-  if (!mount()) {
-    const observer = new MutationObserver(() => {
+  let scheduled = false;
+  function schedule() {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => {
+      scheduled = false;
+      ensureStyles();
+      patchNavigation();
       ensureApartmentLink();
-      if (mount()) observer.disconnect();
+      const block = document.getElementById('complex-tour');
+      if (block) updateText(block);
+      else mount();
     });
-    observer.observe(document.documentElement, { childList: true, subtree: true });
   }
+
+  mount();
+  new MutationObserver(schedule).observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['lang']
+  });
 })();
