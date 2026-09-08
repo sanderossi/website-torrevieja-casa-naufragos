@@ -42,14 +42,19 @@
       'el apartamento', "l'appartement", 'l’appartement'
     ]),
     gallery: new Set(['photos', 'photo', 'foto', 'fotos', "foto's", 'foto’s']),
-    location: new Set(['location', 'locatie', 'ligging', 'ubicación', 'ubicacion', 'emplacement']),
+    location: new Set(['location', 'locatie', 'ligging', 'ubicación', 'ubicacion', 'emplacement', 'situation']),
     pricing: new Set(['prices', 'price', 'prijzen', 'precios', 'tarifs', 'tarif']),
     benefits: new Set([
       'inbegrepen voordelen', 'included benefits', 'benefits included',
       'ventajas incluidas', 'beneficios incluidos', 'avantages inclus'
     ]),
     faq: new Set(['faq', 'veelgestelde vragen', 'preguntas frecuentes', 'questions fréquentes', 'questions frequentes']),
-    contact: new Set(['contact', 'contacto', 'check availability', 'check beschikbaarheid', 'ver disponibilidad', 'voir les disponibilités', 'voir les disponibilites'])
+    contact: new Set([
+      'contact', 'contacto', 'check availability', 'check beschikbaarheid',
+      'comprobar disponibilidad', 'ver disponibilidad',
+      'vérifier la disponibilité', 'verifier la disponibilite',
+      'voir les disponibilités', 'voir les disponibilites'
+    ])
   };
 
   const apartmentNavLabels = new Set([
@@ -127,24 +132,6 @@
       opacity: .76;
       border-color: currentColor;
     }
-    header .cn-nav-primary-cta {
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      padding: .55rem 1rem !important;
-      border-radius: 9999px !important;
-      background: #B44927 !important;
-      color: #fff !important;
-      font-weight: 600 !important;
-      text-decoration: none !important;
-      text-shadow: none !important;
-      box-shadow: 0 8px 22px -14px rgba(43,38,32,.65) !important;
-    }
-    header .cn-nav-primary-cta:hover {
-      background: #9f3e22 !important;
-      color: #fff !important;
-      text-shadow: none !important;
-    }
     @media (max-width: 700px) {
       #complex-tour { margin-bottom: 2rem; }
       #complex-tour .ct-card {
@@ -199,11 +186,7 @@
 
   function setNavigationText(element, text) {
     if ((element.textContent || '').trim() === text) return;
-    const iconChildren = [...element.children].filter(child => child.tagName?.toLowerCase() === 'svg');
-    [...element.childNodes].forEach(node => {
-      if (!iconChildren.includes(node)) node.remove();
-    });
-    element.append(document.createTextNode(text));
+    element.textContent = text;
   }
 
   function hideNavigationItem(element, role) {
@@ -218,16 +201,13 @@
     if (!header) return false;
 
     const t = navCopy[language()] || navCopy.en;
-    const candidates = [...header.querySelectorAll('a[href^="#"], button')];
     let changed = false;
 
-    for (const element of candidates) {
-      if (element.closest('[data-cn-nav-ignore]')) continue;
-
-      // Protect hamburger, close and other icon controls. Menu text buttons do not
-      // contain SVG icons, while the mobile menu trigger does.
-      if (element.tagName === 'BUTTON' && element.querySelector('svg')) continue;
-
+    // Header navigation items are React buttons inside <nav>. Restrict all menu
+    // changes to those buttons so the language controls, desktop CTA and mobile
+    // hamburger/close button remain completely untouched.
+    const menuButtons = [...header.querySelectorAll('nav button')];
+    for (const element of menuButtons) {
       const role = roleForNavigationItem(element);
       if (!role) continue;
 
@@ -241,14 +221,24 @@
       if (label) {
         setNavigationText(element, label);
         element.dataset.cnNavRole = role;
+        element.setAttribute('aria-label', label);
         changed = true;
       }
-
-      if (role === 'contact') {
-        element.classList.add('cn-nav-primary-cta');
-        element.setAttribute('aria-label', t.availability);
-      }
     }
+
+    // The desktop availability CTA sits outside <nav>. Update its wording only;
+    // never add classes or override display, otherwise it would appear on iPhone
+    // and push the hamburger out of the header.
+    const desktopCta = [...header.querySelectorAll('button')].find(element =>
+      !element.closest('nav') &&
+      element.classList.contains('hidden') &&
+      element.classList.contains('md:inline-flex')
+    );
+    if (desktopCta) {
+      setNavigationText(desktopCta, t.availability);
+      desktopCta.setAttribute('aria-label', t.availability);
+    }
+
     return changed;
   }
 
