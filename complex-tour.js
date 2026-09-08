@@ -37,16 +37,24 @@
   };
 
   const navTerms = {
-    apartment: new Set(['apartment', 'appartement', 'apartamento']),
+    apartment: new Set([
+      'apartment', 'appartement', 'apartamento', 'het appartement', 'the apartment',
+      'el apartamento', "l'appartement", 'l’appartement'
+    ]),
     gallery: new Set(['photos', 'photo', 'foto', 'fotos', "foto's", 'foto’s']),
     location: new Set(['location', 'locatie', 'ligging', 'ubicación', 'ubicacion', 'emplacement']),
     pricing: new Set(['prices', 'price', 'prijzen', 'precios', 'tarifs', 'tarif']),
+    benefits: new Set([
+      'inbegrepen voordelen', 'included benefits', 'benefits included',
+      'ventajas incluidas', 'beneficios incluidos', 'avantages inclus'
+    ]),
     faq: new Set(['faq', 'veelgestelde vragen', 'preguntas frecuentes', 'questions fréquentes', 'questions frequentes']),
     contact: new Set(['contact', 'contacto', 'check availability', 'check beschikbaarheid', 'ver disponibilidad', 'voir les disponibilités', 'voir les disponibilites'])
   };
 
   const apartmentNavLabels = new Set([
-    'apartment', 'appartement', 'apartamento'
+    'apartment', 'appartement', 'apartamento', 'het appartement', 'the apartment',
+    'el apartamento', "l'appartement", 'l’appartement'
   ]);
 
   const css = `
@@ -103,9 +111,7 @@
       height: 100%;
       object-fit: cover;
     }
-    #apartment-gallery-link {
-      margin-top: 1.5rem;
-    }
+    #apartment-gallery-link { margin-top: 1.5rem; }
     #apartment-gallery-link a {
       display: inline-flex;
       align-items: center;
@@ -182,6 +188,7 @@
     if (href === '#pricing') return 'pricing';
     if (href === '#faq') return 'faq';
     if (href === '#contact') return 'contact';
+    if (['#benefits', '#included', '#included-benefits', '#advantages', '#voorzieningen'].includes(href)) return 'benefits';
 
     const text = normalizedText(element);
     for (const [role, terms] of Object.entries(navTerms)) {
@@ -199,27 +206,33 @@
     element.append(document.createTextNode(text));
   }
 
+  function hideNavigationItem(element, role) {
+    element.style.setProperty('display', 'none', 'important');
+    element.setAttribute('aria-hidden', 'true');
+    element.tabIndex = -1;
+    element.dataset.cnNavRole = role;
+  }
+
   function patchNavigation() {
     const header = document.querySelector('header');
     if (!header) return false;
 
     const t = navCopy[language()] || navCopy.en;
-    // Only patch actual in-page navigation links. Never touch header buttons:
-    // on mobile the hamburger/menu trigger is a button and must remain entirely
-    // under React's control.
-    const candidates = [...header.querySelectorAll('nav a[href^="#"]')];
+    const candidates = [...header.querySelectorAll('a[href^="#"], button')];
     let changed = false;
 
     for (const element of candidates) {
       if (element.closest('[data-cn-nav-ignore]')) continue;
+
+      // Protect hamburger, close and other icon controls. Menu text buttons do not
+      // contain SVG icons, while the mobile menu trigger does.
+      if (element.tagName === 'BUTTON' && element.querySelector('svg')) continue;
+
       const role = roleForNavigationItem(element);
       if (!role) continue;
 
-      if (role === 'faq') {
-        element.style.setProperty('display', 'none', 'important');
-        element.setAttribute('aria-hidden', 'true');
-        element.tabIndex = -1;
-        element.dataset.cnNavRole = 'faq';
+      if (role === 'faq' || role === 'benefits') {
+        hideNavigationItem(element, role);
         changed = true;
         continue;
       }
@@ -253,7 +266,7 @@
     if (direct) return direct;
 
     const navLink = [...document.querySelectorAll('header a[href^="#"], nav a[href^="#"]')].find(anchor => {
-      const label = (anchor.textContent || '').trim().toLocaleLowerCase();
+      const label = normalizedText(anchor);
       return apartmentNavLabels.has(label);
     });
     const href = navLink?.getAttribute('href');
@@ -309,9 +322,6 @@
         </div>
       </div>`;
     updateText(block);
-
-    // The video is deliberately the first visual content in Photos. Visitors
-    // landing on #gallery see the complex tour first and the photo gallery below it.
     container.prepend(block);
 
     const video = block.querySelector('video');
