@@ -3,6 +3,6 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "build": "node scripts/build.mjs && node -e \"require('fs').copyFileSync('renter-info.js','dist/renter-info.js')\" && node -e \"require('fs').copyFileSync('airport-transport.js','dist/airport-transport.js')\" && node -e \"require('fs').copyFileSync('performance-runtime.js','dist/performance-runtime.js')\""
+    "build": "node scripts/build.mjs && node -e \"require('fs').copyFileSync('renter-info.js','dist/renter-info.js')\" && node -e \"require('fs').copyFileSync('airport-transport.js','dist/airport-transport.js')\" && node -e \"require('fs').copyFileSync('performance-runtime.js','dist/performance-runtime.js')\" && node scripts/inject-performance-runtime.mjs"
   }
 }
