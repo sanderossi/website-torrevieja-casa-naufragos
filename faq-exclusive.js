@@ -1,6 +1,7 @@
 (() => {
-  function closeExtraFaqs(except = null) {
-    document.querySelectorAll('#faq #renter-extra-faqs details[open]').forEach(detail => {
+  function closeNativeFaqs(faq, except = null) {
+    if (!faq) return;
+    faq.querySelectorAll('details[open]').forEach(detail => {
       if (detail !== except) detail.open = false;
     });
   }
@@ -18,8 +19,9 @@
     });
   }
 
-  // Keep the native FAQ items exclusive among themselves and in sync with
-  // the original Radix/shadcn accordion above them.
+  // The FAQ consists of the original Radix/shadcn accordion plus multiple
+  // later-added native <details> blocks. Treat all of them as one accordion:
+  // opening any question closes every other open question in #faq.
   document.addEventListener('click', event => {
     const target = event.target instanceof Element ? event.target : null;
     if (!target) return;
@@ -27,11 +29,11 @@
     const faq = target.closest('#faq');
     if (!faq) return;
 
-    const extraSummary = target.closest('#renter-extra-faqs summary');
-    if (extraSummary) {
-      const detail = extraSummary.parentElement;
+    const summary = target.closest('details > summary');
+    if (summary && faq.contains(summary)) {
+      const detail = summary.parentElement;
       if (detail instanceof HTMLDetailsElement && !detail.open) {
-        closeExtraFaqs(detail);
+        closeNativeFaqs(faq, detail);
         closeMainFaqs(faq);
       }
       return;
@@ -41,18 +43,20 @@
       '[data-slot="accordion-trigger"], [data-slot="accordion"] button[aria-expanded][aria-controls]'
     );
     if (mainTrigger && mainTrigger.closest('[data-slot="accordion"]')) {
-      closeExtraFaqs();
+      closeNativeFaqs(faq);
     }
   }, true);
 
-  // Also enforce exclusivity if a native <details> item is opened by script
-  // or browser state restoration rather than by a normal click.
+  // Also cover keyboard activation, browser state restoration and scripted
+  // changes of native <details> elements.
   document.addEventListener('toggle', event => {
     const detail = event.target;
-    if (!(detail instanceof HTMLDetailsElement)) return;
-    if (!detail.matches('#faq #renter-extra-faqs details') || !detail.open) return;
+    if (!(detail instanceof HTMLDetailsElement) || !detail.open) return;
 
-    closeExtraFaqs(detail);
-    closeMainFaqs(detail.closest('#faq'));
+    const faq = detail.closest('#faq');
+    if (!faq) return;
+
+    closeNativeFaqs(faq, detail);
+    closeMainFaqs(faq);
   }, true);
 })();
