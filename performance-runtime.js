@@ -85,46 +85,44 @@
 
   window.MutationObserver=OptimizedMutationObserver;
 
-  const parasolLabels=new Set([
-    '3 beach chairs to take along',
-    '3 strandstoelen om mee te nemen',
-    '3 sillas de playa para llevar',
-    '3 chaises de plage à emporter'
+  const heroParasolLabels=new Set([
+    '100 m to the sand',
+    '100 m van het zand',
+    '100 m de la arena',
+    '100 m du sable'
   ]);
-  let parasolObserver=null;
-  let parasolQueued=false;
+  let heroParasolObserver=null;
+  let heroParasolQueued=false;
 
-  function patchParasolIcon(){
-    parasolQueued=false;
-    const apartment=document.getElementById('apartment');
-    if(!apartment)return false;
-    const walker=document.createTreeWalker(apartment,NodeFilter.SHOW_TEXT);
+  function patchHeroParasolIcon(){
+    heroParasolQueued=false;
+    const hero=document.querySelector('main>section:first-of-type');
+    if(!hero)return false;
+    const walker=document.createTreeWalker(hero,NodeFilter.SHOW_TEXT);
     while(walker.nextNode()){
       const text=(walker.currentNode.nodeValue||'').trim();
-      if(!parasolLabels.has(text))continue;
-      let element=walker.currentNode.parentElement;
-      for(let depth=0;depth<6&&element&&element!==apartment;depth++,element=element.parentElement){
-        const svg=element.querySelector('svg');
-        if(!svg)continue;
-        if(svg.dataset.casaIcon==='parasol')return true;
-        svg.setAttribute('viewBox','0 0 24 24');
-        svg.setAttribute('fill','none');
-        svg.setAttribute('stroke','currentColor');
-        svg.setAttribute('stroke-width','2');
-        svg.setAttribute('stroke-linecap','round');
-        svg.setAttribute('stroke-linejoin','round');
-        svg.innerHTML='<path d="M12.5 11.134 18.196 21"></path><path d="M20.425 5.299a10 10 0 0 0-16.941 9.78c.183.563.843.774 1.355.478L20.16 6.711c.512-.296.66-.973.264-1.413"></path><path d="M21 21H3"></path>';
-        svg.dataset.casaIcon='parasol';
-        return true;
-      }
+      if(!heroParasolLabels.has(text))continue;
+      const item=walker.currentNode.parentElement?.closest('li');
+      const svg=item?.querySelector('svg');
+      if(!svg)continue;
+      if(svg.dataset.casaIcon==='hero-parasol')return true;
+      svg.setAttribute('viewBox','0 0 24 24');
+      svg.setAttribute('fill','none');
+      svg.setAttribute('stroke','currentColor');
+      svg.setAttribute('stroke-width','2');
+      svg.setAttribute('stroke-linecap','round');
+      svg.setAttribute('stroke-linejoin','round');
+      svg.innerHTML='<path d="M12.5 11.134 18.196 21"></path><path d="M20.425 5.299a10 10 0 0 0-16.941 9.78c.183.563.843.774 1.355.478L20.16 6.711c.512-.296.66-.973.264-1.413"></path><path d="M21 21H3"></path>';
+      svg.dataset.casaIcon='hero-parasol';
+      return true;
     }
     return false;
   }
 
-  function scheduleParasolPatch(){
-    if(parasolQueued)return;
-    parasolQueued=true;
-    requestAnimationFrame(patchParasolIcon);
+  function scheduleHeroParasolPatch(){
+    if(heroParasolQueued)return;
+    heroParasolQueued=true;
+    requestAnimationFrame(patchHeroParasolIcon);
   }
 
   const contactCopy={
@@ -178,11 +176,11 @@
       headerObserver.observe(header,{childList:true,subtree:true});
     }
 
-    const apartment=document.getElementById('apartment');
-    if(apartment&&!parasolObserver){
-      parasolObserver=new NativeMutationObserver(scheduleParasolPatch);
-      parasolObserver.observe(apartment,{childList:true,subtree:true,characterData:true});
-      scheduleParasolPatch();
+    const hero=document.querySelector('main>section:first-of-type');
+    if(hero&&!heroParasolObserver){
+      heroParasolObserver=new NativeMutationObserver(scheduleHeroParasolPatch);
+      heroParasolObserver.observe(hero,{childList:true,subtree:true,characterData:true});
+      scheduleHeroParasolPatch();
     }
 
     const contact=document.getElementById('contact');
@@ -192,11 +190,11 @@
       scheduleContactNarrative();
     }
 
-    if(header&&apartment&&contact&&targetBootObserver){
+    if(header&&hero&&contact&&targetBootObserver){
       targetBootObserver.disconnect();
       targetBootObserver=null;
     }
-    return !!(header&&apartment&&contact);
+    return !!(header&&hero&&contact);
   }
 
   if(!attachTargetedObservers()){
