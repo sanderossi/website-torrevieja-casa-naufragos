@@ -14,7 +14,7 @@
     { terms: ['Habaneras shopping centre', 'winkelcentrum Habaneras', 'centro comercial Habaneras', 'centre commercial Habaneras', 'Habaneras'], url: 'https://www.google.com/maps/search/?api=1&query=Centro+Comercial+Habaneras+Torrevieja' },
     { terms: ['Action'], url: 'https://www.google.com/maps/search/?api=1&query=Action+Torrevieja' },
     { terms: ['Torrevieja center', 'Torrevieja centre', 'Centrum van Torrevieja', 'Centro de Torrevieja', 'Centre de Torrevieja'], url: 'https://www.google.com/maps/search/?api=1&query=Torrevieja+centre' },
-    { terms: ['Friday market', 'Vrijdagmarkt', 'Mercadillo del viernes', 'Marché du vendredi', 'marché du vendredi'], url: 'https://www.google.com/maps/search/?api=1&query=Mercadillo+de+Torrevieja+viernes' }
+    { terms: ['Friday market', 'Vrijdagmarkt', 'Mercadillo del viernes', 'Marché du vendredi', 'marché du vendredi'], url: 'https://torrevieja.es/es/dependencias-municipales/mercadillo-torrevieja' }
   ];
 
   const externalTerms = placeRules
@@ -24,23 +24,29 @@
   const externalRegex = new RegExp(externalTerms.map(item => item.term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|'), 'gi');
 
   const priceTerms = { en: 'Prices', nl: 'Prijzen', es: 'Precios', fr: 'Tarifs' };
+  const marketSourceTitles = {
+    en: 'Source: Torrevieja City Council',
+    nl: 'Bron: Gemeente Torrevieja',
+    es: 'Fuente: Ayuntamiento de Torrevieja',
+    fr: 'Source : Mairie de Torrevieja'
+  };
 
   const highlightCopy = {
     en: {
       title: 'Beach and shops within walking distance',
-      items: ['Beach: 2 min walk', 'Lidl & Aldi: 12 min walk', 'Promenade & marina: 20 min walk', 'Centre & boulevard: 20 min walk', 'Pink Lake (flamingos): 10 min by bike', 'Basic-Fit gym: 10 min by bike', 'Aquopolis water park: 10 min by car', 'Alicante Airport: 35 min by car', 'Café & pizzeria: 3 min walk', 'Friday market: up to 700 stalls']
+      items: ['Beach: 2 min walk', 'Lidl & Aldi: 12 min walk', 'Promenade & marina: 20 min walk', 'Centre & boulevard: 20 min walk', 'Pink Lake (flamingos): 10 min by bike', 'Basic-Fit gym: 10 min by bike', 'Aquopolis water park: 10 min by car', 'Alicante Airport: 35 min by car', 'Café & pizzeria: 3 min walk', 'Friday market: up to 500 stalls']
     },
     nl: {
       title: 'Strand en winkels op loopafstand',
-      items: ['Strand: 2 min lopen', 'Lidl & Aldi: 12 min lopen', 'Boulevard & jachthaven: 20 min lopen', 'Centrum & boulevard: 20 min lopen', "Roze meer (flamingo's): 10 min fietsen", 'Basic-Fit: 10 min fietsen', 'Aquopolis-waterpark: 10 min met de auto', 'Vliegveld Alicante: 35 min met de auto', 'Café & pizzeria: 3 min lopen', 'Vrijdagmarkt: tot 700 kramen']
+      items: ['Strand: 2 min lopen', 'Lidl & Aldi: 12 min lopen', 'Boulevard & jachthaven: 20 min lopen', 'Centrum & boulevard: 20 min lopen', "Roze meer (flamingo's): 10 min fietsen", 'Basic-Fit: 10 min fietsen', 'Aquopolis-waterpark: 10 min met de auto', 'Vliegveld Alicante: 35 min met de auto', 'Café & pizzeria: 3 min lopen', 'Vrijdagmarkt: tot 500 kramen']
     },
     es: {
       title: 'Playa y tiendas a poca distancia a pie',
-      items: ['Playa: 2 min a pie', 'Lidl y Aldi: 12 min a pie', 'Frente marítimo y puerto: 20 min a pie', 'Centro y frente marítimo: 20 min a pie', 'Laguna Rosa (flamencos): 10 min en bici', 'Gimnasio Basic-Fit: 10 min en bici', 'Parque acuático Aquopolis: 10 min en coche', 'Aeropuerto de Alicante: 35 min en coche', 'Cafetería y pizzería: 3 min a pie', 'Mercadillo del viernes: hasta 700 puestos']
+      items: ['Playa: 2 min a pie', 'Lidl y Aldi: 12 min a pie', 'Frente marítimo y puerto: 20 min a pie', 'Centro y frente marítimo: 20 min a pie', 'Laguna Rosa (flamencos): 10 min en bici', 'Gimnasio Basic-Fit: 10 min en bici', 'Parque acuático Aquopolis: 10 min en coche', 'Aeropuerto de Alicante: 35 min en coche', 'Cafetería y pizzería: 3 min a pie', 'Mercadillo del viernes: hasta 500 puestos']
     },
     fr: {
       title: 'Plage et commerces à pied',
-      items: ['Plage : 2 min à pied', 'Lidl & Aldi : 12 min à pied', 'Promenade & marina : 20 min à pied', 'Centre & boulevard : 20 min à pied', 'Laguna Rosa (flamants) : 10 min à vélo', 'Salle Basic-Fit : 10 min à vélo', 'Parc aquatique Aquopolis : 10 min en voiture', "Aéroport d'Alicante : 35 min en voiture", 'Café & pizzeria : 3 min à pied', "Marché du vendredi : jusqu'à 700 étals"]
+      items: ['Plage : 2 min à pied', 'Lidl & Aldi : 12 min à pied', 'Promenade & marina : 20 min à pied', 'Centre & boulevard : 20 min à pied', 'Laguna Rosa (flamants) : 10 min à vélo', 'Salle Basic-Fit : 10 min à vélo', 'Parc aquatique Aquopolis : 10 min en voiture', "Aéroport d'Alicante : 35 min en voiture", 'Café & pizzeria : 3 min à pied', "Marché du vendredi : jusqu'à 500 étals"]
     }
   };
 
@@ -84,7 +90,9 @@
     if (external) {
       a.target = '_blank';
       a.rel = 'noopener noreferrer';
-      a.title = 'Open in Google Maps';
+      a.title = href.includes('torrevieja.es/')
+        ? (marketSourceTitles[lang()] || marketSourceTitles.en)
+        : 'Open in Google Maps';
     }
     return a;
   }
