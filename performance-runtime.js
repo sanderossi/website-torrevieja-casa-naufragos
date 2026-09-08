@@ -23,6 +23,36 @@
     document.head.appendChild(style);
   }
 
+  if(!document.getElementById('booking-strike-only-fix')){
+    const style=document.createElement('style');
+    style.id='booking-strike-only-fix';
+    style.textContent=`
+      #contact td.rdp-disabled,
+      #contact td[data-disabled="true"] {
+        text-decoration:none!important;
+      }
+      html body #contact td[data-booked="true"] {
+        color:inherit!important;
+        opacity:1!important;
+        background:transparent!important;
+        border-radius:0!important;
+        text-decoration:line-through!important;
+      }
+      html body #contact td[data-booked="true"] button {
+        color:inherit!important;
+        opacity:1!important;
+        background:transparent!important;
+        box-shadow:none!important;
+        text-decoration:line-through!important;
+      }
+      html body #contact td[data-booked="true"]::after {
+        content:none!important;
+        display:none!important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   const optimizedObservers=new Set();
   let notifyQueued=false;
 
@@ -125,6 +155,45 @@
     requestAnimationFrame(patchHeroParasolIcon);
   }
 
+  const bookedDates=new Set();
+  let bookedCalendarQueued=false;
+
+  function addIsoDays(iso,amount){
+    const date=new Date(`${iso}T00:00:00Z`);
+    date.setUTCDate(date.getUTCDate()+amount);
+    return date.toISOString().slice(0,10);
+  }
+
+  function setBookedPeriods(periods){
+    bookedDates.clear();
+    for(const period of periods||[]){
+      if(!period?.arrival||!period?.departure||period.arrival>period.departure)continue;
+      const firstFreeDay=addIsoDays(period.departure,1);
+      for(let date=period.arrival;date<firstFreeDay;date=addIsoDays(date,1))bookedDates.add(date);
+    }
+    scheduleBookedCalendar();
+  }
+
+  function patchBookedCalendar(){
+    bookedCalendarQueued=false;
+    document.querySelectorAll('#contact td[data-day]').forEach(cell=>{
+      const date=cell.getAttribute('data-day');
+      if(date&&bookedDates.has(date))cell.setAttribute('data-booked','true');
+      else cell.removeAttribute('data-booked');
+    });
+  }
+
+  function scheduleBookedCalendar(){
+    if(bookedCalendarQueued)return;
+    bookedCalendarQueued=true;
+    requestAnimationFrame(patchBookedCalendar);
+  }
+
+  fetch(`/api/availability?t=${Date.now()}`,{cache:'no-store'})
+    .then(response=>response.ok?response.json():Promise.reject(new Error(`Availability ${response.status}`)))
+    .then(data=>setBookedPeriods(Array.isArray(data?.periods)?data.periods:[]))
+    .catch(error=>console.error('Availability styling load failed',error));
+
   const contactCopy={
     en:{empty:'Choose your arrival and departure dates on the left. Then enter your name, number of guests and email address.',selected:(arrival,departure)=>`You selected ${arrival} to ${departure}. How many people are coming? Leave your name and email address and Heidie will confirm availability and the applicable rate.`},
     nl:{empty:'Kies links je aankomst- en vertrekdatum. Vul daarna alleen nog je naam, het aantal personen en je e-mailadres in.',selected:(arrival,departure)=>`Je hebt ${arrival} t/m ${departure} geselecteerd. Met hoeveel personen kom je? Laat je naam en e-mailadres achter; Heidie laat je weten of de data nog vrij zijn en welk tarief geldt.`},
@@ -185,9 +254,13 @@
 
     const contact=document.getElementById('contact');
     if(contact&&!contactObserver){
-      contactObserver=new NativeMutationObserver(scheduleContactNarrative);
+      contactObserver=new NativeMutationObserver(()=>{
+        scheduleContactNarrative();
+        scheduleBookedCalendar();
+      });
       contactObserver.observe(contact,{childList:true,subtree:true,characterData:true});
       scheduleContactNarrative();
+      scheduleBookedCalendar();
     }
 
     if(header&&hero&&contact&&targetBootObserver){
