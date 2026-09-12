@@ -28,22 +28,24 @@
     style.id='booking-strike-only-fix';
     style.textContent=`
       #contact td.rdp-disabled,
-      #contact td[data-disabled="true"] {
+      #contact td[data-disabled="true"],
+      #contact td.rdp-disabled button,
+      #contact td[data-disabled="true"] button {
         text-decoration:none!important;
       }
       html body #contact td[data-booked="true"] {
-        color:inherit!important;
+        color:#b8b0a8!important;
         opacity:1!important;
         background:transparent!important;
         border-radius:0!important;
-        text-decoration:line-through!important;
+        text-decoration:none!important;
       }
       html body #contact td[data-booked="true"] button {
-        color:inherit!important;
+        color:#b8b0a8!important;
         opacity:1!important;
         background:transparent!important;
         box-shadow:none!important;
-        text-decoration:line-through!important;
+        text-decoration:none!important;
       }
       html body #contact td[data-booked="true"]::after {
         content:none!important;
