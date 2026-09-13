@@ -3,6 +3,6 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "build": "node scripts/build.mjs && node scripts/streamline-site.mjs && node -e \"require('fs').copyFileSync('performance-runtime.js','dist/performance-runtime.js')\" && node scripts/inject-performance-runtime.mjs"
+    "build": "node scripts/build.mjs && node scripts/streamline-site.mjs && node --check dist/index-DYBGkSYM.js && node -e \"require('fs').copyFileSync('performance-runtime.js','dist/performance-runtime.js')\" && node scripts/inject-performance-runtime.mjs"
   }
 }
