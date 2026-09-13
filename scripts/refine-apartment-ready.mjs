@@ -34,7 +34,7 @@ replaceOne(
 
 replaceOne(
   'b.jsx("div",{className:"mt-4 rounded-2xl border border-terracotta/25 bg-white/80 px-5 py-4 text-[15px] leading-relaxed text-foreground/75",children:i.included})',
-  'b.jsxs("div",{className:"mt-4 rounded-2xl border border-terracotta/25 bg-white/80 px-5 py-4",children:[b.jsx("h3",{className:"font-display text-lg text-foreground",children:i.includedTitle}),b.jsx("p",{className:"mt-2 text-[15px] leading-relaxed text-foreground/75",children:i.included}),b.jsx("p",{className:"mt-2 text-[14px] leading-relaxed text-foreground/60",children:i.cleaning})]})',
+  'b.jsxs("div",{className:"mt-4 rounded-2xl border border-terracotta/25 bg-white/80 px-5 py-4",children:[b.jsx("h3",{className:"font-display text-lg text-foreground",children:i.includedTitle}),b.jsx("p",{className:"mt-2 text-[15px] leading-relaxed text-foreground/75",children:i.included}),b.jsx("p",{className:"mt-2 text-[15px] leading-relaxed text-foreground/75",children:i.cleaning})]})',
   'Apartment included row'
 );
 
