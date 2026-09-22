@@ -6,7 +6,7 @@
 // Gebruik altijd ISO-datums: YYYY-MM-DD.
 export default [
   {
-    arrival: '2026-09-27',
+    arrival: '2026-12-18',
     departure: '2027-01-27',
   },
 ];
