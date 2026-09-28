@@ -9,4 +9,12 @@ export default [
     arrival: '2026-12-18',
     departure: '2027-01-27',
   },
+  {
+    arrival: '2027-03-01',
+    departure: '2027-04-04',
+  },
+  {
+    arrival: '2027-12-01',
+    departure: '2028-02-29',
+  },
 ];
